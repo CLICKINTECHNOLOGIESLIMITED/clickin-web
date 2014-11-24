@@ -1,4 +1,4 @@
-SetEnv  CAKE_ENV  development
+SetEnv  CAKE_ENV  production
 
 <IfModule mod_rewrite.c>
    RewriteEngine on
