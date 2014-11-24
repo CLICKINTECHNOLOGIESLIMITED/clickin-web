@@ -1,0 +1,285 @@
+@charset "utf-8";
+/* CSS Document */
+
+html {
+	font-family: sans-serif;
+	-webkit-text-size-adjust: 100%;
+	-ms-text-size-adjust: 100%;
+}
+
+@font-face {
+	font-family: 'AvenirNext';
+	src: url(../img/fonts/AvenirNextLTPro-Medium.otf) format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
+@font-face {
+	font-family: 'avenirnextbold';
+	src: url(../img/fonts/AvenirNextLTPro-Bold.otf) format('truetype');
+	font-weight: bold;
+	font-style: normal;
+}
+
+body {
+  margin: 0;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+main,
+nav,
+section,
+summary {
+  display: block;
+}
+audio,
+canvas,
+progress,
+video {
+  display: inline-block;
+  vertical-align: baseline;
+}
+audio:not([controls]) {
+  display: none;
+  height: 0;
+}
+h1, h2, h3, h4, h5{margin:0; padding:0;}
+
+body {
+  color: #777;
+  font-size: 13px;
+  line-height: 1.6em;
+  font-family:'AvenirNext';
+  font-weight: normal;
+  text-rendering: optimizeLegibility;
+  word-wrap: break-word;
+  background-color: white;
+}
+
+a {
+	color:#4fc2d2;
+	text-decoration: none;
+	-webkit-transition: all 0.3s ease-out;
+	-moz-transition: all 0.3s ease-out;
+	-o-transition: all 0.3s ease-out;
+	transition: all 0.3s ease-out;
+}
+
+a:hover,
+a:focus,
+a:active {
+  color: #4fc2d2;
+  text-decoration: none;
+}
+.clearfix:after {
+   content: " "; /* Older browser do not support empty content */
+   visibility: hidden;
+   display: block;
+   height: 0;
+   clear: both;
+}
+img{
+	max-width:100%;
+	width:100%;
+}
+.main-wrapper {
+  margin: 0 auto;
+  max-width:500px;
+}
+header{
+	display:block;
+	width:100%;
+	padding:10px 10px 0 10px;
+	float:left;
+}
+.thumimg{
+	display:block;
+	width:70px;
+	float:left;
+}
+.headingBox{
+	width:60%;
+	float:left;
+	padding:5px;
+}
+.headingBox .headings{
+	font-family:'avenirnextbold';
+	display:block;
+	color:#4fc2d2;
+	font-size:25px;
+	line-height:25px;
+	float:left;
+	margin-top:5px;
+}
+
+.headingBox .subheading{
+	font-family:'AvenirNext';
+	display:block;
+	color:#7d7d7d;
+	font-size:20px;
+	line-height:20px;
+	float:left;
+	margin-top:10px;
+}
+.headingBox .forwardarrow{
+	width:auto;
+	margin:0px 10px 0 10px;
+	float:left;
+}
+.timeBox{
+	float:right;
+	color:#7d7d7d;
+	font-family:'AvenirNext';
+	font-size:17px;
+	line-height:20px;
+	margin-top:15px;
+        width: 15%;
+}
+.main-wrapper hr{
+	display:block;
+	width:100%;
+	color:#eee;
+	border:1px solid #eee;
+	float:left;
+	margin:10px 0;
+}
+
+section{
+	display:block;
+	width:100%;
+	padding:0 10px 10px 10px;
+	float:left;
+}
+.videoContainer{
+	display:block;
+	width:100%;
+	text-align:center;
+}
+footer{
+	display:block;
+	width:100%;
+	float:left;
+	padding:0 10px 10px 10px;
+}
+.footercontainer{
+	display:block;
+	padding:10px;
+	background:#f6f6f6;
+}
+.footercontainer1{
+	display:block;
+	padding:10px;
+	background:#f5a19b;
+}
+.footercontainer1 .numberBox{
+	font-family:'avenirnextbold';
+	display:block;
+	color:#fff;
+	font-size: 24px;
+    line-height: 24px;
+    margin-right: 5px;
+    margin-top: 5px;
+	float:left;
+}
+.footercontainer1 .imgicon{
+	float:left;
+}
+.container{
+	margin:0 auto;
+	width:400px;
+}
+.bearhug, .clickBoxx{
+	float:left;
+	position:relative;
+}
+.bearhug .textBox{
+	color: #fff;
+        display: block;
+        font-family: 'avenirnextbold';
+        font-size: 30px;
+        left: 10px;
+        line-height: 24px;
+        position: absolute;
+        top: 13px;
+}
+.bearhug .textBox1{
+	bottom: 14px;
+        color: #fff;
+        display: block;
+        font-family: 'avenirnextbold';
+        font-size: 30px;
+        line-height: 24px;
+        position: absolute;
+        right: 29px;
+}
+
+.clickBoxx .clickbgg{
+	/*background:url(../img/clickbgg.png) no-repeat top left;
+	width:264px;
+	height:354px;*/
+	position:relative;
+	display:block;
+}
+/*.footerclickbgg .container{
+	width:465px;
+}*/
+
+.clickbgg .textBoxnew{
+	color: #fff;
+        display: block;
+        font-family: 'avenirnextbold';
+        font-size: 30px;
+        left: 12px;
+        line-height: 44px;
+        position: absolute;
+        top: 4px;
+}
+.clickbgg .textBoxnew1{
+	bottom: 9px;
+        color: #fff;
+        display: block;
+        font-family: 'avenirnextbold';
+        font-size: 29px;
+        line-height: 44px;
+        position: absolute;
+        right: 33px;
+}
+.clickbgg .container{
+	color: #fff;
+        font-size: 25px;
+        font-weight: bold;
+        left: 50%;
+        line-height: 30px;
+        margin-left: -68px;
+        margin-top: -66px;
+        position: absolute;
+        text-transform: uppercase;
+        top: 50%;
+        width: 140px;
+}
+.accepted{
+	float:left;
+	padding:30px 0 0 30px;
+}
+.accepted h2{
+	font-family:'avenirnextbold';
+	display:block;
+	color:#000;
+	font-size: 24px;
+    line-height: 24px;
+}
+
+.accepted hr{
+	border:2px solid #eee;
+}
+.contentBox{
+	font-size:20px;
+	color:#000;
+	font-family:'AvenirNext';
+	line-height:20px;
+}
