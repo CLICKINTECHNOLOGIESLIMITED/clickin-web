@@ -1,0 +1,5 @@
+app/Config/database.php
+app/Config/clickin_settings.php
+app/webroot/files/ck.pem
+app/tmp/cache
+app/tmp/logs
