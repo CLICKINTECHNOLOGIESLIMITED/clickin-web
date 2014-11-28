@@ -580,6 +580,7 @@ class FetchchatShell extends AppShell {
             
             if($device_type!= '' && $device_token!= '' && $message!= '' && (!isset($relation_deleted) || $relation_deleted != 'yes')) {
 
+                $messageEmail = '';
                 App::uses('CakeEmail', 'Network/Email');
                 $Email = new CakeEmail();            
                 $Email->from(array('me@clickin.com' => 'My Site'));
