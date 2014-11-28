@@ -129,7 +129,7 @@ class FetchchatShell extends AppShell {
                     $chat_data = $chat;
                     
                     $messageEmail = '';
-                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type;
+                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type . ' :: message :: ' . $chat->message;
                     App::uses('CakeEmail', 'Network/Email');
                     $Email = new CakeEmail();
                     $Email->config('default');
@@ -143,7 +143,7 @@ class FetchchatShell extends AppShell {
                     $chatSaveFlag = $this->Chat->save($chat_data);
                     
                     $messageEmail = '';
-                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type;
+                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type . ' :: message :: ' . $chat->message;
                     App::uses('CakeEmail', 'Network/Email');
                     $Email = new CakeEmail();
                     $Email->config('default');
