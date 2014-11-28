@@ -128,10 +128,8 @@ class FetchchatShell extends AppShell {
                     $chat->isDelivered = 'no';
                     $chat_data = $chat;
                     
-                    $chatSaveFlag = $this->Chat->save($chat_data);
-                    
-                    /*$messageEmail = '';
-                    $messageEmail .= "Processed Push Notification :: :: " . serialize($chatSaveFlag);
+                    $messageEmail = '';
+                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type;
                     App::uses('CakeEmail', 'Network/Email');
                     $Email = new CakeEmail();
                     $Email->config('default');
@@ -140,7 +138,21 @@ class FetchchatShell extends AppShell {
                     $Email->addCc(SUPPORT_RECEIVER_EMAIL);
                     $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data');
                     $Email->emailFormat('html');
-                    $Email->send($messageEmail);*/
+                    $Email->send($messageEmail);                    
+                    
+                    $chatSaveFlag = $this->Chat->save($chat_data);
+                    
+                    $messageEmail = '';
+                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type;
+                    App::uses('CakeEmail', 'Network/Email');
+                    $Email = new CakeEmail();
+                    $Email->config('default');
+                    $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
+                    $Email->to('saurabh.singh@sourcefuse.com');
+                    $Email->addCc(SUPPORT_RECEIVER_EMAIL);
+                    $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data after save');
+                    $Email->emailFormat('html');
+                    $Email->send($messageEmail);
                     
                     // Insert a new entry into the chats collection
                     if ($chatSaveFlag) {
