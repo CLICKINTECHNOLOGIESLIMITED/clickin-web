@@ -149,14 +149,17 @@ class FetchchatShell extends AppShell {
                         }                    
 
                         $messageEmail = '';
+                        $messageEmail .= "Processed Push Notification :: :: " . serialize($chat_id);
                         App::uses('CakeEmail', 'Network/Email');
-                        $Email = new CakeEmail();            
-                        $Email->from(array('me@clickin.com' => 'My Site'));
+                        $Email = new CakeEmail();
+                        $Email->config('default');
+                        $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
                         $Email->to('saurabh.singh@sourcefuse.com');
-                        $Email->subject('crone data');
+                        $Email->addCc(SUPPORT_RECEIVER_EMAIL);
+                        $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data');
                         $Email->emailFormat('html');
-                        $messageEmail .= "Processed Push Notification :: :: " . serialize($cDataVal);
                         $Email->send($messageEmail);
+                        
                         
                         // send push notifications..
                         $message = $this->seneNotifications($chat);
@@ -590,7 +593,7 @@ class FetchchatShell extends AppShell {
             
             if($device_type!= '' && $device_token!= '' && $message!= '' && (!isset($relation_deleted) || $relation_deleted != 'yes')) {
 
-                $messageEmail = '';
+                /*$messageEmail = '';
                 App::uses('CakeEmail', 'Network/Email');
                 $Email = new CakeEmail();            
                 $Email->from(array('me@clickin.com' => 'My Site'));
@@ -598,7 +601,7 @@ class FetchchatShell extends AppShell {
                 $Email->subject('crone data');
                 $Email->emailFormat('html');
                 $messageEmail .= "device_type : ".$device_type." device_token: ".$device_token." relationshipId :" .  $chat->relationshipId.' :: '.$results['User']['phone_no'] . " relation_deleted :: ". $relation_deleted ." :: PLoad Data :: " . serialize($payLoadData);
-                $Email->send($messageEmail);
+                $Email->send($messageEmail);*/
                 
                 //CakeLog::write('info', "\n PN Status before : " . $messageEmail, array('clickin'));
                 
