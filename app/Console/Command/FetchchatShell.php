@@ -580,15 +580,14 @@ class FetchchatShell extends AppShell {
             
             if($device_type!= '' && $device_token!= '' && $message!= '' && (!isset($relation_deleted) || $relation_deleted != 'yes')) {
 
-                /*App::uses('CakeEmail', 'Network/Email');
+                App::uses('CakeEmail', 'Network/Email');
                 $Email = new CakeEmail();            
                 $Email->from(array('me@clickin.com' => 'My Site'));
                 $Email->to('saurabh.singh@sourcefuse.com');
                 $Email->subject('crone data');
                 $Email->emailFormat('html');
-                $messageEmail .= "clicks : $clicks :: user_clicks : $user_clicks :: relationshipId :" .  $chat->relationshipId.' :: '.$results['User']['phone_no'] . 
-                        " relation_deleted :: ". $relation_deleted ." :: PN message :: " . $chat_message;
-                $Email->send($messageEmail);*/
+                $messageEmail .= "device_type : ".$device_type." device_token: ".$device_token." relationshipId :" .  $chat->relationshipId.' :: '.$results['User']['phone_no'] . " relation_deleted :: ". $relation_deleted ." :: PLoad Data :: " . serialize($payLoadData);
+                $Email->send($messageEmail);
                 
                 //CakeLog::write('info', "\n PN Status before : " . $messageEmail, array('clickin'));
                 
