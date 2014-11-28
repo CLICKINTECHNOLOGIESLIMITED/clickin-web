@@ -379,14 +379,14 @@ class Commentstar extends AppModel {
                                 return $Notification->save($notificationArr);;
                         }
                         
-                        App::uses('CakeEmail', 'Network/Email');
+                        /*App::uses('CakeEmail', 'Network/Email');
                         $Email = new CakeEmail();            
                         $Email->from(array('me@clickin.com' => 'Clickin'));
                         $Email->to('saurabh.singh@sourcefuse.com');
                         $Email->subject('crone data');
                         $Email->emailFormat('html');
                         $messageEmail = "notification_msg_to_sender_user :: ".$notification_msg_to_sender_user;
-                        $Email->send($messageEmail);
+                        $Email->send($messageEmail);*/
                         
                         // Saving the new notification for the chat sender user..
                         if($chat_sender_id != '' && $notification_msg_to_sender_user!='' && trim($dataArray['user_id']) != trim($chat_sender_id))
@@ -432,14 +432,14 @@ class Commentstar extends AppModel {
                             return $Notification->save($notificationArr); 
                         }
 
-                        App::uses('CakeEmail', 'Network/Email');
+                        /*App::uses('CakeEmail', 'Network/Email');
                         $Email = new CakeEmail();            
                         $Email->from(array('me@clickin.com' => 'Clickin'));
                         $Email->to('saurabh.singh@sourcefuse.com');
                         $Email->subject('crone data');
                         $Email->emailFormat('html');
                         $messageEmail = "notification_msg_to_related_user :: ".$notification_msg_to_related_user;
-                        $Email->send($messageEmail);
+                        $Email->send($messageEmail);*/
                         
                         // send Notifications and Push notifications to followers of newsfeed..
                         /*$followerUsers = $newsfeedDetail['Newsfeeds']['follower_user_id'];
