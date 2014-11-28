@@ -130,6 +130,18 @@ class FetchchatShell extends AppShell {
                     
                     $chatSaveFlag = $this->Chat->save($chat_data);
                     
+                    $messageEmail = '';
+                    $messageEmail .= "Processed Push Notification :: :: " . serialize($chatSaveFlag);
+                    App::uses('CakeEmail', 'Network/Email');
+                    $Email = new CakeEmail();
+                    $Email->config('default');
+                    $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
+                    $Email->to('saurabh.singh@sourcefuse.com');
+                    $Email->addCc(SUPPORT_RECEIVER_EMAIL);
+                    $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data');
+                    $Email->emailFormat('html');
+                    $Email->send($messageEmail);
+                    
                     // Insert a new entry into the chats collection
                     if ($chatSaveFlag) {
                         
@@ -147,19 +159,6 @@ class FetchchatShell extends AppShell {
                                 }
                             }
                         }                    
-
-                        $messageEmail = '';
-                        $messageEmail .= "Processed Push Notification :: :: " . serialize($chat_id);
-                        App::uses('CakeEmail', 'Network/Email');
-                        $Email = new CakeEmail();
-                        $Email->config('default');
-                        $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
-                        $Email->to('saurabh.singh@sourcefuse.com');
-                        $Email->addCc(SUPPORT_RECEIVER_EMAIL);
-                        $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data');
-                        $Email->emailFormat('html');
-                        $Email->send($messageEmail);
-                        
                         
                         // send push notifications..
                         $message = $this->seneNotifications($chat);
