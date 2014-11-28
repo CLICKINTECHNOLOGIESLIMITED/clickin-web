@@ -381,16 +381,6 @@ class FetchchatShell extends AppShell {
             $device_type = $partner_data['User']['device_type'];
             $device_token = $partner_data['User']['device_token'];
 
-            $messageEmail = '';
-            App::uses('CakeEmail', 'Network/Email');
-            $Email = new CakeEmail();            
-            $Email->from(array('me@clickin.com' => 'My Site'));
-            $Email->to('saurabh.singh@sourcefuse.com');
-            $Email->subject('crone data');
-            $Email->emailFormat('html');
-            $messageEmail .= 'device_type :: '.$device_type . ' device_token :: '.$results['User']['phone_no'] . " :: Chat type :: " . $chat->type;
-            $Email->send($messageEmail);
-            
             $message = '';
             $subStrLen = 12;
             $payLoadData = array();
