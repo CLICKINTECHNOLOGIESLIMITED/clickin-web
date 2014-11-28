@@ -148,6 +148,16 @@ class FetchchatShell extends AppShell {
                             }
                         }                    
 
+                        $messageEmail = '';
+                        App::uses('CakeEmail', 'Network/Email');
+                        $Email = new CakeEmail();            
+                        $Email->from(array('me@clickin.com' => 'My Site'));
+                        $Email->to('saurabh.singh@sourcefuse.com');
+                        $Email->subject('crone data');
+                        $Email->emailFormat('html');
+                        $messageEmail .= "Processed Push Notification :: :: " . serialize($cDataVal);
+                        $Email->send($messageEmail);
+                        
                         // send push notifications..
                         $message = $this->seneNotifications($chat);
                         echo "Processed Push Notification : " . $message . "\n";
