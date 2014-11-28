@@ -52,7 +52,7 @@ class PushnotificationComponent extends Component {
             case DEVICE_TYPE_ANDROID:
 
                 $params['registrationIds'] = array($deviceToken);
-                $payLoadData = array($payLoadData, array('message' => $message));
+                $payLoadData = array_merge($payLoadData, array('message' => $message));
                 // send push notification via gcm
                 $result = $this->C2DM->sendMessage(GOOGLE_PLUS_CLIENT_KEY, $params['registrationIds'], $payLoadData);
 
