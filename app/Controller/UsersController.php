@@ -755,6 +755,7 @@ class UsersController extends AppController {
                                 // image on S3..
                                 $user_path = WWW_ROOT . "images/user_pics/" . $data[0]['User']['_id'];
                                 $fullpath = $user_path . "/profile_pic.jpg";
+                                $responseDel = $this->CakeS3->deleteObject('user_pics' . DS . $data[0]['User']['_id'] . '_profile_pic.jpg');
                                 $response = $this->CakeS3->putObject($fullpath, 'user_pics' . DS . $data[0]['User']['_id'] . '_profile_pic.jpg', 
                                         $this->CakeS3->permission('public_read_write'));
                                 $imageUrl = $response['url'];
