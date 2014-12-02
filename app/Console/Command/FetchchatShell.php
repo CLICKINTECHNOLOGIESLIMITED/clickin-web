@@ -71,7 +71,7 @@ class FetchchatShell extends AppShell {
                 $Email->addCc(SUPPORT_RECEIVER_EMAIL);
                 $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | chat data');
                 $Email->emailFormat('html');
-                $Email->send($messageEmail);
+                $Email->send($messageEmail);exit;
                 // add implementation about delived message..
                 if($chat->type == 7)
                 {
