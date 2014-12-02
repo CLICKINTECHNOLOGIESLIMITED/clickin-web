@@ -60,7 +60,18 @@ class FetchchatShell extends AppShell {
             $processed_chats = array();
             // Process each chat entry and insert into collection
             foreach ($chats_data->items as $chat) {
-            
+                
+                $messageEmail = '';
+                $messageEmail .= "Processed Push Notification type :: :: " . $chat->type . ' :: message :: ' . $chat->message . ' :: message :: ' . $chat->clicks;
+                App::uses('CakeEmail', 'Network/Email');
+                $Email = new CakeEmail();
+                $Email->config('default');
+                $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
+                $Email->to('saurabh.singh@sourcefuse.com');
+                $Email->addCc(SUPPORT_RECEIVER_EMAIL);
+                $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | chat data');
+                $Email->emailFormat('html');
+                $Email->send($messageEmail);
                 // add implementation about delived message..
                 if($chat->type == 7)
                 {
@@ -128,31 +139,7 @@ class FetchchatShell extends AppShell {
                     $chat->isDelivered = 'no';
                     $chat_data = $chat;
                     
-                    $messageEmail = '';
-                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type . ' :: message :: ' . $chat->message;
-                    App::uses('CakeEmail', 'Network/Email');
-                    $Email = new CakeEmail();
-                    $Email->config('default');
-                    $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
-                    $Email->to('saurabh.singh@sourcefuse.com');
-                    $Email->addCc(SUPPORT_RECEIVER_EMAIL);
-                    $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data');
-                    $Email->emailFormat('html');
-                    $Email->send($messageEmail);                    
-                    
                     $chatSaveFlag = $this->Chat->save($chat_data);
-                    
-                    $messageEmail = '';
-                    $messageEmail .= "Processed Push Notification type :: :: " . $chat->type . ' :: message :: ' . $chat->message;
-                    App::uses('CakeEmail', 'Network/Email');
-                    $Email = new CakeEmail();
-                    $Email->config('default');
-                    $Email->from(array(SUPPORT_SENDER_EMAIL => SUPPORT_SENDER_EMAIL_NAME));
-                    $Email->to('saurabh.singh@sourcefuse.com');
-                    $Email->addCc(SUPPORT_RECEIVER_EMAIL);
-                    $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | crone data after save');
-                    $Email->emailFormat('html');
-                    $Email->send($messageEmail);
                     
                     // Insert a new entry into the chats collection
                     if ($chatSaveFlag) {
