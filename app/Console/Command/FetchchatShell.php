@@ -51,6 +51,7 @@ class FetchchatShell extends AppShell {
      */
     public function retrieveChatRecordsQB() {
         
+try{
         // Fetch the chats from the Quickblox server
         $chats_data = $this->Quickblox->fetchChatHistory();
 
@@ -60,7 +61,7 @@ class FetchchatShell extends AppShell {
             $processed_chats = array();
             // Process each chat entry and insert into collection
             foreach ($chats_data->items as $chat) {
-                
+               /* 
                 $messageEmail = '';
                 $messageEmail .= "Processed Push Notification type :: :: " . $chat->type . ' :: message :: ' . $chat->message . ' :: message :: ' . $chat->clicks;
                 App::uses('CakeEmail', 'Network/Email');
@@ -71,7 +72,8 @@ class FetchchatShell extends AppShell {
                 $Email->addCc(SUPPORT_RECEIVER_EMAIL);
                 $Email->subject(SUPPORT_SENDER_EMAIL_NAME . ' | chat data');
                 $Email->emailFormat('html');
-                $Email->send($messageEmail);exit;
+                $Email->send($messageEmail);
+*/
                 // add implementation about delived message..
                 if($chat->type == 7)
                 {
@@ -182,7 +184,11 @@ class FetchchatShell extends AppShell {
                 //$this->retrieveChatRecordsQB();                
             }
         }
-        
+    }
+catch(Exception $ex){
+	mail("saurabh.singh@sourcefuse.com","test".time(),json_encode($ex->getMessage()));
+}    
+	mail("saurabh.singh@sourcefuse.com","test done".time(),"done");
         die;
     }
 
