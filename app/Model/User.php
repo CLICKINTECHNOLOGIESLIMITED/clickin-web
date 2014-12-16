@@ -45,7 +45,7 @@ class User extends AppModel {
      */
     public function fetchUserProfile($phone_no) {
         $params = array(
-            'fields' => array('_id', 'name', 'QB_id', 'user_pic', 'dob', 'gender', 'unread_notifications_count', 'following', 'follower', 'city', 'country', 'email'),
+            'fields' => array('_id', 'name', 'QB_id', 'user_pic', 'dob', 'gender', 'unread_notifications_count', 'following', 'follower', 'city', 'country', 'email','is_enable_push_notification'),
             'conditions' => array('phone_no' => $phone_no, "verified" => true),
             'order' => array('_id' => -1),
             'limit' => 20,
