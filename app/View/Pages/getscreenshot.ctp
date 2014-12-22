@@ -133,8 +133,8 @@ if ($chatDetailArr['Chat']['type'] == 3) {
                     <span class="imgicon">
                         <?php echo $this->Html->image('screen1icon.png', $iicon); ?>
                     </span>
-                    <span class="numberBox" <?php echo $nbox; ?>> <?php echo (strlen($chatDetailArr['Chat']['message']) <= 12 ? $chatDetailArr['Chat']['message'] : 
-    substr($chatDetailArr['Chat']['message'], 0, 12) . '...'); ?></span>
+                    <span class="numberBox" <?php echo $nbox; ?>> <?php echo (strlen($chatDetailArr['Chat']['message']) <= 25 ? $chatDetailArr['Chat']['message'] : 
+    substr($chatDetailArr['Chat']['message'], 0, 25) . '...'); ?></span>
                 </div>
             <?php } ?>
         <?php } else { ?>
