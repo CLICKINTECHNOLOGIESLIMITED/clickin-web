@@ -32,6 +32,7 @@ Router::connect('/', array('controller' => 'admin', 'action' => 'login'));
  * ...and connect the rest of 'Pages' controller's urls.
  */
 Router::connect('/pages/getscreenshot', array('controller' => 'pages', 'action' => 'getscreenshot'));
+Router::connect('/pages/generatethumb', array('controller' => 'pages', 'action' => 'generatethumb'));
 
 Router::connect('/pages/:slug', array('controller' => 'pages', 'action' => 'index'), array('slug' => '[a-zA-Z-0-9]+'));
 

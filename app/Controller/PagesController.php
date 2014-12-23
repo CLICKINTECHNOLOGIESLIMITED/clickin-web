@@ -40,6 +40,19 @@ class PagesController extends AppController {
     public $uses = array('Staticpage', 'Sharing', 'User', 'Chat', 'Newsfeeds');
     
     /**
+     * components property
+     * 
+     * @var array
+     * @access public
+     */
+    public $components = array('CakeS3.CakeS3' => array(
+            's3Key' => AMAZON_S3_KEY,
+            's3Secret' => AMAZON_S3_SECRET_KEY,
+            'bucket' => BUCKET_NAME,
+            'endpoint' => END_POINT
+    ));
+    
+    /**
      * index method
      *
      * @return void
@@ -69,18 +82,6 @@ class PagesController extends AppController {
     public function getscreenshot()
     {
         $this->layout = 'share';
-        // clicks : "53726076252e08f7358b4567"
-        // image + clicks : "537242b9252e088f2c8b4567"
-        // image : "5372489c252e087e478b4567"
-        // audio + clicks : "53980044252e0849758b4567"
-        // audio : "53a03e4e252e080f4f8b4567"        
-        // video + clicks : "53800d2d252e08a67a8b4567"
-        // video : "53724df4252e084a618b4567"     
-           
-        // custom card : "5373509c252e08f0778b4567"
-        // trade card :  "5371fbf9252e084f678b4567"
-        // location : "53720378252e08e40a8b4567"
-        
         $sharingId = $this->request->named['shareid'];;
         
         $paramSharing = array('conditions' => array('_id' => new MongoId($sharingId)));
@@ -138,6 +139,67 @@ class PagesController extends AppController {
         $this->render('/Pages/getscreenshot');
     }
 
+    /**
+     * generatethumb method
+     *  
+     */
+    public function generatethumb() 
+    {
+        $userArr = $this->User->find('all', array('conditions' => array( 'verified' => true)));
+        if(count($userArr)>0) {
+            foreach($userArr as $uArr) {
+                // Setting image path
+                $user_path = WWW_ROOT . "images/user_pics/" . (string) $uArr['User']['_id'];
+                $fullpath = $user_path . "/profile_pic.jpg";
+                if (file_exists($fullpath)) {
+                    echo 'User Id: ' . $uArr['User']['_id']; echo '<br>';                
+                    $fullpathThumb = $user_path . "/thumb_profile_pic.jpg";
+                    $this->resize_image($fullpath, $fullpathThumb, 150, 150, false);
+                    $response = $this->CakeS3->putObject($fullpathThumb, 'user_pics' . DS . $uArr['User']['_id'] . '_thumb_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));                                
+                    echo 'S3 Image Url: ' . $imageUrl = $response['url'] .'<br><br>';
+                }
+            }
+        }
+        //echo '<pre>';//print_r($userArr);
+        exit;
+    }
+    
+    /**
+     * resize_image method
+     * This function is used to make resized image from main image.
+     * @param string $file
+     * @param string $filePath
+     * @param integer $w
+     * @param resize_image $h
+     * @param boolean $crop
+     * @return string
+     */
+    function resize_image($file, $filePath, $w, $h, $crop = FALSE) {
+        list($width, $height) = getimagesize($file);
+        $r = $width / $height;
+        if ($crop) {
+            if ($width > $height) {
+                $width = ceil($width - ($width * abs($r - $w / $h)));
+            } else {
+                $height = ceil($height - ($height * abs($r - $w / $h)));
+            }
+            $newwidth = $w;
+            $newheight = $h;
+        } else {
+            if ($w / $h > $r) {
+                $newwidth = $h * $r;
+                $newheight = $h;
+            } else {
+                $newheight = $w / $r;
+                $newwidth = $w;
+            }
+        }
+        $src = imagecreatefromjpeg($file);
+        $dst = imagecreatetruecolor($newwidth, $newheight);
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+        imagejpeg($dst, $filePath);
+    }
+    
     /**
      * Displays a view
      *
