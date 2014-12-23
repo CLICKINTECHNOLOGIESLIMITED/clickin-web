@@ -212,7 +212,7 @@ class UsersController extends AppController {
      * @access private
      */
     private function sendVcodeSMS($phone_no, $vcode) {
-        $message = Configure::read('WEBSMS_TEMPLATE') . " $vcode";               
+        $message = Configure::read('WEBSMS_TEMPLATE') . " $vcode";
         return $this->Sms->sendSms($phone_no, $message);
     }
 
@@ -373,7 +373,7 @@ class UsersController extends AppController {
         $request_data = $this->request->input('json_decode');
 
         switch (true) {
-	    // When request is not made using POST method
+            // When request is not made using POST method
             case!$this->request->isPost() :
                 $success = false;
                 $status = BAD_REQUEST;
@@ -391,15 +391,15 @@ class UsersController extends AppController {
                         $success = false;
                         $status = ERROR;
                         $message = 'User already verified';
-                    } /*elseif (!empty($request_data->device_token) && $request_data->device_token!='' && $request_data->device_token != $data[0]['User']['device_token']) { // Device Token is not same as in database
-                        $success = false;
-                        $status = UNAUTHORISED;
-                        $message = 'Device Token is invalid';
-			CakeLog::write('info', "\n dt invalid.. " . $request_data->phone_no, array('clickin'));
-                    }*/ else {
+                    } /* elseif (!empty($request_data->device_token) && $request_data->device_token!='' && $request_data->device_token != $data[0]['User']['device_token']) { // Device Token is not same as in database
+                      $success = false;
+                      $status = UNAUTHORISED;
+                      $message = 'Device Token is invalid';
+                      CakeLog::write('info', "\n dt invalid.. " . $request_data->phone_no, array('clickin'));
+                      } */ else {
                         // Checking environment variable, to determine application environment
                         $env = getenv('CAKE_ENV');
-			CakeLog::write('info', "\n vcode resend sms flow... " . $request_data->phone_no, array('clickin'));
+                        CakeLog::write('info', "\n vcode resend sms flow... " . $request_data->phone_no, array('clickin'));
                         // Set a new vcode for production only
                         if (!$env || $env == 'production') {
                             // Generate a new vcode
@@ -498,9 +498,8 @@ class UsersController extends AppController {
                       $message = 'User not verified';
                       } else */
                     if ($request_data->user_token != $data[0]['User']['user_token']) { // User Token is not valid
-                        
                         CakeLog::write('info', "\nUser token data : cur: " . $request_data->user_token . " app: " . $data[0]['User']['user_token'], array('clickin'));
-                        
+
                         $success = false;
                         $status = UNAUTHORISED;
                         $message = 'User Token is invalid';
@@ -755,11 +754,14 @@ class UsersController extends AppController {
                                 // image on S3..
                                 $user_path = WWW_ROOT . "images/user_pics/" . $data[0]['User']['_id'];
                                 $fullpath = $user_path . "/profile_pic.jpg";
-                                $responseDel = $this->CakeS3->deleteObject('user_pics' . DS . $data[0]['User']['_id'] . '_profile_pic.jpg');
-                                $response = $this->CakeS3->putObject($fullpath, 'user_pics' . DS . $data[0]['User']['_id'] . '_profile_pic.jpg', 
-                                        $this->CakeS3->permission('public_read_write'));
-                                $imageUrl = $response['url'];
                                 
+                                $fullpathThumb = $user_path . "/thumb_profile_pic.jpg";
+                                $this->CakeS3->putObject($fullpathThumb, 'user_pics' . DS . $data[0]['User']['_id'] . '_thumb_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));
+                                
+                                $this->CakeS3->deleteObject('user_pics' . DS . $data[0]['User']['_id'] . '_profile_pic.jpg');
+                                $response = $this->CakeS3->putObject($fullpath, 'user_pics' . DS . $data[0]['User']['_id'] . '_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));
+                                $imageUrl = $response['url'];
+
                                 $user_data['user_pic'] = $imageUrl;
                                 $request_data->partner_pic = $imageUrl;
                             }
@@ -904,7 +906,7 @@ class UsersController extends AppController {
     private function saveimage($image, $user_id) {
         // Check if image data is set
         if (isset($image)) {
-           
+
             // Setting image path
             $user_path = WWW_ROOT . "images/user_pics/" . $user_id;
 
@@ -915,17 +917,20 @@ class UsersController extends AppController {
                 chmod($user_path, 0777);
             }
             $fullpath = $user_path . "/profile_pic.jpg";
+            $fullpathThumb = $user_path . "/thumb_profile_pic.jpg";
 
             // Remove file if already exists
             if (file_exists($fullpath)) {
                 unlink($fullpath);
             }
-            $image_url = $fullpath;
-
+            
             // Put binary data into image file
             $png_file = fopen($fullpath, 'wb');
             fwrite($png_file, base64_decode($image));
             fclose($png_file);
+            
+            // making thumb for this image...
+            $this->resize_image($fullpath, $fullpathThumb, 150, 150, false);
 
             // Check file type created
             // Remove if not JPG
@@ -939,6 +944,42 @@ class UsersController extends AppController {
         }
 
         return false;
+    }
+
+    /**
+     * resize_image method
+     * This function is used to make resized image from main image.
+     * @param string $file
+     * @param string $filePath
+     * @param integer $w
+     * @param resize_image $h
+     * @param boolean $crop
+     * @return string
+     */
+    function resize_image($file, $filePath, $w, $h, $crop = FALSE) {
+        list($width, $height) = getimagesize($file);
+        $r = $width / $height;
+        if ($crop) {
+            if ($width > $height) {
+                $width = ceil($width - ($width * abs($r - $w / $h)));
+            } else {
+                $height = ceil($height - ($height * abs($r - $w / $h)));
+            }
+            $newwidth = $w;
+            $newheight = $h;
+        } else {
+            if ($w / $h > $r) {
+                $newwidth = $h * $r;
+                $newheight = $h;
+            } else {
+                $newheight = $w / $r;
+                $newwidth = $w;
+            }
+        }
+        $src = imagecreatefromjpeg($file);
+        $dst = imagecreatetruecolor($newwidth, $newheight);
+        imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
+        imagejpeg($dst, $filePath);
     }
 
     /**
@@ -967,20 +1008,20 @@ class UsersController extends AppController {
                 } else {
                     // Check if email exists
                     $data = $this->User->findUserByEmail($request_data->email);
-					// Set phone no in request object, in case of login with email
-					if(isset($data[0]['User']['phone_no']) && $data[0]['User']['phone_no'] != '') {
-						$request_data->phone_no = $data[0]['User']['phone_no'];
-					}
+                    // Set phone no in request object, in case of login with email
+                    if (isset($data[0]['User']['phone_no']) && $data[0]['User']['phone_no'] != '') {
+                        $request_data->phone_no = $data[0]['User']['phone_no'];
+                    }
                 }
 
                 // Check if record exists
                 if (count($data) != 0) {
-                    /*/ Check user is active or not.
-                    if (isset($data[0]['User']['is_active']) && $data[0]['User']['is_active'] == 'no') {
-                        $success = false;
-                        $status = UNAUTHORISED;
-                        $message = 'User not active';
-                    } else */ 
+                    /* / Check user is active or not.
+                      if (isset($data[0]['User']['is_active']) && $data[0]['User']['is_active'] == 'no') {
+                      $success = false;
+                      $status = UNAUTHORISED;
+                      $message = 'User not active';
+                      } else */
                     if ($data[0]['User']['verified'] !== TRUE) { // Check user is verified
                         $success = false;
                         $status = UNAUTHORISED;
@@ -990,7 +1031,6 @@ class UsersController extends AppController {
                         $status = UNAUTHORISED;
                         $message = 'Wrong password';
                     } else { // Credentials are valid
-
                         // update detail in users collection..
                         $params = array(
                             'fields' => array('_id', 'device_token', 'device_type'),
@@ -998,10 +1038,10 @@ class UsersController extends AppController {
                         );
                         // Find records matching phone no.
                         $results = $this->User->find('first', $params);
-                        
-                        if(isset($data[0]['User']['is_active']) && $data[0]['User']['is_active'] == 'no')
+
+                        if (isset($data[0]['User']['is_active']) && $data[0]['User']['is_active'] == 'no')
                             $results['User']['is_active'] = 'yes';
-                        
+
                         // Checking if phone is same as the device registered in database
                         if (isset($request_data->device_token) && $request_data->device_token != $data[0]['User']['device_token']) { // Match phone on successful login
                             $device_registered = false;
@@ -1015,14 +1055,14 @@ class UsersController extends AppController {
                                 $results['User']['device_token'] = '';
                             }
 
-                            $this->User->clear();                            
+                            $this->User->clear();
                             $results['User']['device_type'] = $request_data->device_type;
                             $this->User->save($results);
                         } else {
 
                             $this->User->clear();
                             $this->User->save($results);
-                            
+
                             // unset same device token from other user's data..
                             $this->unsetSameDeviceToken($request_data->device_token, $request_data->phone_no);
 
@@ -1400,13 +1440,13 @@ class UsersController extends AppController {
                         // Check if the logged in user is already relationships the searched phone no
                         $relationshipArr = $this->User->findPublicRelationships($phone_no);
 
-			
+
                         // get relationship with current user..
                         $params = array(
                             'fields' => array('_id', 'relationships'),
                             'conditions' => array('phone_no' => $request_phone_no, 'relationships.phone_no' => $this->request->named['profile_phone_no'])
                         );
-                        
+
                         $relation_status = '';
                         // Find records matching phone no.
                         $resultRelation = $this->User->find('first', $params);
@@ -1415,15 +1455,15 @@ class UsersController extends AppController {
                                 if ($resultRelation["User"]["relationships"][$urKey]['phone_no'] == $this->request->named['profile_phone_no']) {
                                     $accepted = $resultRelation["User"]["relationships"][$urKey]['accepted'];
                                     $deleted = $resultRelation["User"]["relationships"][$urKey]['deleted'];
-                                    if($deleted == 'yes') {
+                                    if ($deleted == 'yes') {
                                         $relation_status = '';
                                         break;
-                                    } 
-                                    if($accepted === null)
+                                    }
+                                    if ($accepted === null)
                                         $relation_status = 'requested';
-                                    elseif($accepted === true)
+                                    elseif ($accepted === true)
                                         $relation_status = 'accepted';
-                                    elseif($accepted === false)
+                                    elseif ($accepted === false)
                                         $relation_status = '';
                                     break;
                                 }
@@ -1514,7 +1554,7 @@ class UsersController extends AppController {
                         if (isset($this->request->named['profile_phone_no']) && $this->request->named['profile_phone_no'] !== null) {
                             $phone_no = $this->request->named['profile_phone_no'];
                             $data = $this->User->findUser($phone_no);
-                            if($this->request->named['profile_phone_no'] == $phone_no)
+                            if ($this->request->named['profile_phone_no'] == $phone_no)
                                 $isOwner = 1;
                             else
                                 $isOwner = 0;
@@ -1799,11 +1839,11 @@ class UsersController extends AppController {
         return new CakeResponse(array('body' => json_encode($results), 'type' => 'json'));
     }
 
-    public function testsms()
-    {
+    public function testsms() {
         $phone_no = '+919891594731';
-        $message = Configure::read('WEBSMS_TEMPLATE') . " 00001111";        
-        $this->Sms->sendSms($phone_no, $message); 
+        $message = Configure::read('WEBSMS_TEMPLATE') . " 00001111";
+        $this->Sms->sendSms($phone_no, $message);
         exit;
     }
+
 }
