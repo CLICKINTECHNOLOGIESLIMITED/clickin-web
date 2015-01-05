@@ -146,30 +146,28 @@ class PagesController extends AppController {
                 // Setting image path
                 echo 'User S3 image: ' . $uArr['User']['user_pic'];
                 echo '<br>';
-                if (substr_count($uArr['User']['user_pic'], 'amazonaws') > 0) {
-                    $file_content = file_get_contents(str_replace('https', 'http', $uArr['User']['user_pic'])); //exit;
-                    $user_path = WWW_ROOT . "images/user_pics/" . (string) $uArr['User']['_id'];
-                    $fullpath = $user_path . "/profile_pic.jpg";
+                $file_content = file_get_contents(str_replace('https', 'http', $uArr['User']['user_pic'])); //exit;
+                $user_path = WWW_ROOT . "images/user_pics/" . (string) $uArr['User']['_id'];
+                $fullpath = $user_path . "/profile_pic.jpg";
 
-                    // Create path if not found
-                    if (!file_exists($user_path)) {
-                        mkdir($user_path);
-                        // Provide required permissions to folder
-                        chmod($user_path, 0777);
-                    }
-
-                    touch($fullpath);
-                    chmod($fullpath, 0777);
-                    $png_file = fopen($fullpath, 'wb');
-                    fwrite($png_file, $file_content);
-                    fclose($png_file);
-                    echo 'User Id: ' . $uArr['User']['_id'];
-                    echo '<br>';
-                    $fullpathThumb = $user_path . "/thumb_profile_pic.jpg";
-                    $this->resize_image($fullpath, $fullpathThumb, 150, 150, false);
-                    $response = $this->CakeS3->putObject($fullpathThumb, 'user_pics' . DS . $uArr['User']['_id'] . '_thumb_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));
-                    echo 'S3 Image Url: ' . $imageUrl = $response['url'] . '<br><br>';
+                // Create path if not found
+                if (!file_exists($user_path)) {
+                    mkdir($user_path);
+                    // Provide required permissions to folder
+                    chmod($user_path, 0777);
                 }
+
+                touch($fullpath);
+                chmod($fullpath, 0777);
+                $png_file = fopen($fullpath, 'wb');
+                fwrite($png_file, $file_content);
+                fclose($png_file);
+                echo 'User Id: ' . $uArr['User']['_id'];
+                echo '<br>';
+                $fullpathThumb = $user_path . "/thumb_profile_pic.jpg";
+                $this->resize_image($fullpath, $fullpathThumb, 150, 150, false);
+                $response = $this->CakeS3->putObject($fullpathThumb, 'user_pics' . DS . $uArr['User']['_id'] . '_thumb_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));
+                echo 'S3 Image Url: ' . $imageUrl = $response['url'] . '<br><br>';
             }
         }
         //echo '<pre>';//print_r($userArr);
