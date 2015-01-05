@@ -38,7 +38,7 @@ class PagesController extends AppController {
      * @var array
      */
     public $uses = array('Staticpage', 'Sharing', 'User', 'Chat', 'Newsfeeds');
-    
+
     /**
      * components property
      * 
@@ -51,7 +51,7 @@ class PagesController extends AppController {
             'bucket' => BUCKET_NAME,
             'endpoint' => END_POINT
     ));
-    
+
     /**
      * index method
      *
@@ -60,18 +60,18 @@ class PagesController extends AppController {
      */
     public function index() {
         $this->layout = 'front';
-        
+
         $slug = $this->request->params['slug'];
         $staticPageData = $this->Staticpage->find('first', array('conditions' => array('slug' => $slug)));
-        
+
         //$staticPageData['Staticpage']['description'] = addslashes('');        
         //$this->Staticpage->save($staticPageData);
-        
+
         $this->set('staticPageData', $staticPageData);
         $this->set('title_for_layout', $staticPageData['Staticpage']['title']);
         $this->set('page_title', $staticPageData['Staticpage']['title']);
         $this->render('/Pages/index');
-    }    
+    }
 
     /**
      * getscreenshot method
@@ -79,59 +79,55 @@ class PagesController extends AppController {
      * @return void
      * @access public
      */
-    public function getscreenshot()
-    {
+    public function getscreenshot() {
         $this->layout = 'share';
-        $sharingId = $this->request->named['shareid'];;
-        
+        $sharingId = $this->request->named['shareid'];
+        ;
+
         $paramSharing = array('conditions' => array('_id' => new MongoId($sharingId)));
         $sharingDetailArr = $this->Sharing->find('first', $paramSharing);
         //print_r($sharingDetailArr);        
-        
+
         $chat_id = $this->request->named['chatid'];
-        
-         // fetching chat details by id...
+
+        // fetching chat details by id...
         $paramChats = array('conditions' => array('_id' => new MongoId($chat_id)));
         $chatDetailArr = $this->Chat->find('first', $paramChats);
-        
+
         // get sender detail..
         $senderId = $chatDetailArr['Chat']['userId'];
-        $senderDataArr = $this->User->find('first', array('conditions' => array( '_id' => $senderId)));
+        $senderDataArr = $this->User->find('first', array('conditions' => array('_id' => $senderId)));
         $senderDetail = array(
-            '_id'=>$senderDataArr['User']['_id'],
-            'name'=>$senderDataArr['User']['name'],
-            'user_pic'=>$senderDataArr['User']['user_pic']
+            '_id' => $senderDataArr['User']['_id'],
+            'name' => $senderDataArr['User']['name'],
+            'user_pic' => $senderDataArr['User']['user_pic']
         );
-        
+
         $relationshipId = $chatDetailArr['Chat']['relationshipId'];
-                
+
         // get receiver detail..
-        $receiverDataArr = $this->User->find('first', array('conditions' => array( 
-            '_id' => new MongoId($chatDetailArr['Chat']['userId']), 'relationships.id' => new MongoId($relationshipId)
+        $receiverDataArr = $this->User->find('first', array('conditions' => array(
+                '_id' => new MongoId($chatDetailArr['Chat']['userId']), 'relationships.id' => new MongoId($relationshipId)
         )));
         $releationshipArr = $receiverDataArr['User']['relationships'];
         $receiverUserId = '';
-        if(count($releationshipArr)>0)
-        {
-            foreach($releationshipArr as $rsArr)
-            {
-                if($relationshipId == (string)$rsArr['id'])
-                {
-                   $receiverUserId =  $rsArr['partner_id'];
-                   break;
+        if (count($releationshipArr) > 0) {
+            foreach ($releationshipArr as $rsArr) {
+                if ($relationshipId == (string) $rsArr['id']) {
+                    $receiverUserId = $rsArr['partner_id'];
+                    break;
                 }
             }
         }
-        if($receiverUserId !='')
-        {
-            $receiverUserDataArr = $this->User->find('first', array('conditions' => array( '_id' =>  new MongoId($receiverUserId))));
+        if ($receiverUserId != '') {
+            $receiverUserDataArr = $this->User->find('first', array('conditions' => array('_id' => new MongoId($receiverUserId))));
             $receiverUserDetail = array(
-                '_id'=>$receiverUserDataArr['User']['_id'],
-                'name'=>$receiverUserDataArr['User']['name'],
-                'user_pic'=>$receiverUserDataArr['User']['user_pic']
+                '_id' => $receiverUserDataArr['User']['_id'],
+                'name' => $receiverUserDataArr['User']['name'],
+                'user_pic' => $receiverUserDataArr['User']['user_pic']
             );
         }
-                
+
         $this->set('sharingDetailArr', $sharingDetailArr);
         $this->set('chatDetailArr', $chatDetailArr);
         $this->set('senderDetail', $senderDetail);
@@ -143,27 +139,43 @@ class PagesController extends AppController {
      * generatethumb method
      *  
      */
-    public function generatethumb() 
-    {
-        $userArr = $this->User->find('all', array('conditions' => array( 'verified' => true)));
-        if(count($userArr)>0) {
-            foreach($userArr as $uArr) {
+    public function generatethumb() {
+        $userArr = $this->User->find('all', array('conditions' => array('verified' => true)));
+        if (count($userArr) > 0) {
+            foreach ($userArr as $uArr) {
                 // Setting image path
-                $user_path = WWW_ROOT . "images/user_pics/" . (string) $uArr['User']['_id'];
-                $fullpath = $user_path . "/profile_pic.jpg";
-                if (file_exists($fullpath)) {
-                    echo 'User Id: ' . $uArr['User']['_id']; echo '<br>';                
+                echo 'User S3 image: ' . $uArr['User']['user_pic'];
+                echo '<br>';
+                if (substr_count($uArr['User']['user_pic'], 'amazonaws') > 0) {
+                    $file_content = file_get_contents(str_replace('https', 'http', $uArr['User']['user_pic'])); //exit;
+                    $user_path = WWW_ROOT . "images/user_pics/" . (string) $uArr['User']['_id'];
+                    $fullpath = $user_path . "/profile_pic.jpg";
+
+                    // Create path if not found
+                    if (!file_exists($user_path)) {
+                        mkdir($user_path);
+                        // Provide required permissions to folder
+                        chmod($user_path, 0777);
+                    }
+
+                    touch($fullpath);
+                    chmod($fullpath, 0777);
+                    $png_file = fopen($fullpath, 'wb');
+                    fwrite($png_file, $file_content);
+                    fclose($png_file);
+                    echo 'User Id: ' . $uArr['User']['_id'];
+                    echo '<br>';
                     $fullpathThumb = $user_path . "/thumb_profile_pic.jpg";
                     $this->resize_image($fullpath, $fullpathThumb, 150, 150, false);
-                    $response = $this->CakeS3->putObject($fullpathThumb, 'user_pics' . DS . $uArr['User']['_id'] . '_thumb_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));                                
-                    echo 'S3 Image Url: ' . $imageUrl = $response['url'] .'<br><br>';
+                    $response = $this->CakeS3->putObject($fullpathThumb, 'user_pics' . DS . $uArr['User']['_id'] . '_thumb_profile_pic.jpg', $this->CakeS3->permission('public_read_write'));
+                    echo 'S3 Image Url: ' . $imageUrl = $response['url'] . '<br><br>';
                 }
             }
         }
         //echo '<pre>';//print_r($userArr);
         exit;
     }
-    
+
     /**
      * resize_image method
      * This function is used to make resized image from main image.
@@ -199,7 +211,7 @@ class PagesController extends AppController {
         imagecopyresampled($dst, $src, 0, 0, 0, 0, $newwidth, $newheight, $width, $height);
         imagejpeg($dst, $filePath);
     }
-    
+
     /**
      * Displays a view
      *
