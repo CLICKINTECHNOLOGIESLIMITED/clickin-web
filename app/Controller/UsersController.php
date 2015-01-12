@@ -840,8 +840,8 @@ class UsersController extends AppController {
                                                 $this->Notification->save($new_partner_notification);
 
                                                 $message = trim($data[0]['User']['name']) . " updated profile pic.";
-                                                $device_type = $results['User']['device_type'];
-                                                $device_token = $results['User']['device_token'];
+                                                $device_type = $new_partner[0]['User']['device_type'];
+                                                $device_token = $new_partner[0]['User']['device_token'];
                                                 $payLoadData = array(
                                                     'Tp' => "Upp",
                                                     'chat_message' => $message
