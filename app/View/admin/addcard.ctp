@@ -5,25 +5,43 @@
 <div class="form-group">
     <label for="name" class="col-sm-2 control-label">Name</label>
     <div class="col-sm-10">
-        <?php echo $this->Form->input('title', array('class' => 'form-control', 'label' => false)); ?>
+        <?php echo $this->Form->input('title', array('class' => 'form-control', 'label' => false, 'required' => 'required')); ?>
+        <div class="help-block with-errors"></div>
     </div>
 </div>
 <div class="form-group">
     <label for="name" class="col-sm-2 control-label">Category</label>
     <div class="col-sm-10">
-        <?php echo $this->Form->input('category', array('class' => 'form-control', 'label' => false)); ?>
+        <?php echo $this->Form->input('category', array('class' => 'form-control', 'label' => false, 'required' => 'required')); ?>
+        <div class="help-block with-errors"></div>
     </div>
 </div>
 <div class="form-group">
     <label for="name" class="col-sm-2 control-label">Description</label>
     <div class="col-sm-10">
-        <?php echo $this->Form->textarea('description', array('class' => 'form-control', 'label' => false)); ?>
+        <?php echo $this->Form->textarea('description', array('class' => 'form-control', 'label' => false, 'required' => 'required')); ?>
+        <div class="help-block with-errors"></div>
     </div>
 </div>
 <div class="form-group">
     <label for="name" class="col-sm-2 control-label">Image</label>
     <div class="col-sm-10">
-        <?php echo $this->Form->file('image', array('class' => '', 'label' => false)); ?>
+        <?php echo $this->Form->file('image', array('class' => '', 'label' => false, 'required' => 'required')); ?>
+        <div class="help-block with-errors"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="name" class="col-sm-2 control-label">Image (1080)</label>
+    <div class="col-sm-10">
+        <?php echo $this->Form->file('image1080', array('class' => '', 'label' => false, 'required' => 'required')); ?>
+        <div class="help-block with-errors"></div>
+    </div>
+</div>
+<div class="form-group">
+    <label for="name" class="col-sm-2 control-label">Image (720)</label>
+    <div class="col-sm-10">
+        <?php echo $this->Form->file('image720', array('class' => '', 'label' => false, 'required' => 'required')); ?>
+        <div class="help-block with-errors"></div>
     </div>
 </div>
 <div class="form-group">
@@ -51,6 +69,7 @@ $catStr = rtrim($catStr,', ');
 
 <script type="text/javascript">
 $(document).ready(function(){
-    $("#CardCategory").select2({tags:[ <?php echo $catStr; ?> ]});
+    $('#CardAddcardForm').validator();
+    $("#CardCategory").select2({tags:[ <?php echo $catStr; ?> ]});    
 });
 </script>

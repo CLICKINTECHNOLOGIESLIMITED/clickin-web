@@ -15,6 +15,7 @@
         echo $this->Html->script('jquery.tablednd');
 
         echo $this->Html->script('select2.min');
+        echo $this->Html->script('validator');
         echo $this->Html->css('select2');
         echo $this->Html->css('select2-bootstrap');
 

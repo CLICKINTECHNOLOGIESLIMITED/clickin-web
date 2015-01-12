@@ -5,14 +5,12 @@ App::uses('AppController', 'Controller');
 class AdminController extends AppController {
 
     public $uses = array('User', 'Category', 'Card', 'Admin', 'Newsfeeds', 'Sharing', 'Feedback', 'Commentstar', 'Notification');
-    
     public $components = array('Session', 'Paginator', 'CakeS3.CakeS3' => array(
             's3Key' => AMAZON_S3_KEY,
             's3Secret' => AMAZON_S3_SECRET_KEY,
             'bucket' => BUCKET_NAME,
             'endpoint' => END_POINT
     ));
-    
     public $limitPerPage = 10;
 
     public function beforeFilter() {
@@ -183,9 +181,15 @@ class AdminController extends AppController {
             if ($_FILES['data']['name']['Card']['image'] != '') {
                 $imageName = $_FILES['data']['name']['Card']['image'];
                 //move_uploaded_file($_FILES['data']['tmp_name']['Card']['image'], WWW_ROOT . "images/" . $imageName);
-                $response = $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image'], 'cards/'.$imageName, 
-                        $this->CakeS3->permission('public_read_write'));
+                $response = $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image'], 'cards/' . $imageName, $this->CakeS3->permission('public_read_write'));
                 $this->request->data['Card']['image'] = $response['url'];
+
+                // for 1080 dimension image.
+                $imageName1080 = $_FILES['data']['name']['Card']['image1080'];
+                $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image1080'], 'cards/a/1080/' . $imageName1080, $this->CakeS3->permission('public_read_write'));
+                // for 720 dimension image.
+                $imageName720 = $_FILES['data']['name']['Card']['image720'];
+                $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image720'], 'cards/a/720/' . $imageName720, $this->CakeS3->permission('public_read_write'));
             }
 
             $this->request->data['Card']['category'] = $newCatArr;
@@ -225,18 +229,24 @@ class AdminController extends AppController {
             if ($_FILES['data']['name']['Card']['image'] != '') {
                 $imageName = $_FILES['data']['name']['Card']['image'];
                 //move_uploaded_file($_FILES['data']['tmp_name']['Card']['image'], WWW_ROOT . "images/" . $imageName);
-                $response = $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image'], 'cards/'.$imageName, 
-                        $this->CakeS3->permission('public_read_write'));
+                $response = $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image'], 'cards/' . $imageName, $this->CakeS3->permission('public_read_write'));
                 $this->request->data['Card']['image'] = $response['url'];
             } else {
                 $this->request->data['Card']['image'] = $this->request->data['Card']['hidimage'];
             }
             unset($this->request->data['Card']['hidimage']);
+            if ($_FILES['data']['name']['Card']['image1080'] != '') {
+                $imageName = $_FILES['data']['name']['Card']['image1080'];
+                $response = $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image1080'], 'cards/a/1080/' . $imageName, $this->CakeS3->permission('public_read_write'));
+            }
+            if ($_FILES['data']['name']['Card']['image720'] != '') {
+                $imageName = $_FILES['data']['name']['Card']['image720'];
+                $response = $this->CakeS3->putObject($_FILES['data']['tmp_name']['Card']['image720'], 'cards/a/720/' . $imageName, $this->CakeS3->permission('public_read_write'));
+            }
 
             $this->request->data['Card']['_id'] = $id;
             $this->request->data['Card']['category'] = $newCatArr;
             $this->request->data['Card']['user_id'] = '0'; //$this->Session->read('User.loginUserID');
-
             // If the form data can be validated and saved...
             if ($this->Card->save($this->request->data)) {
                 // Set a session flash message and redirect.
@@ -252,6 +262,15 @@ class AdminController extends AppController {
         $this->set('title_for_layout', 'Edit Card');
         $this->set('page_title', 'Edit Card');
         $this->render('/admin/editcard');
+    }
+
+    public function deletecard() {
+        $id = $this->request->named['id'];
+
+        $this->Card->delete(new MongoId($id));
+
+        $this->Session->setFlash(__('Card has been deleted.'), 'default', array('class' => 'alert alert-success'));
+        return $this->redirect('/admin/cards');
     }
 
     public function reportedinappropriatenewsfeeds() {
@@ -273,15 +292,15 @@ class AdminController extends AppController {
 
     public function deletenewsfeed() {
         $id = $this->request->named['id'];
-        
+
         $this->Notification->deleteAll(array('newsfeed_id' => $id));
         $this->Commentstar->deleteAll(array('newsfeed_id' => $id));
         $this->Newsfeeds->delete(new MongoId($id));
-        
+
         $this->Session->setFlash(__('Newsfeed has been deleted.'), 'default', array('class' => 'alert alert-success'));
         return $this->redirect('/admin/reportedinappropriatenewsfeeds');
     }
-    
+
     public function viewnewsfeed() {
 
         $id = $this->request->named['id'];
@@ -289,7 +308,7 @@ class AdminController extends AppController {
         $newsfeed = $this->Newsfeeds->find('first', array('conditions' => array('_id' => new MongoId($id))));
         $commentStars = $this->Commentstar->find('all', array('conditions' => array('newsfeed_id' => $id)));
         $creatorData = $this->User->find('first', array('conditions' => array('_id' => new MongoId($newsfeed['Newsfeeds']['user_id']))));
-        
+
         // If no form data, find the recipe to be edited
         // and hand it to the view.
         $this->set('newsfeed', $newsfeed);
@@ -299,7 +318,7 @@ class AdminController extends AppController {
         $this->set('page_title', 'View Newsfeed');
         $this->render('/admin/viewnewsfeed');
     }
-    
+
     public function reportedproblems() {
 
         $this->Paginator->settings = array(
@@ -359,5 +378,5 @@ class AdminController extends AppController {
         $this->set('page_title', 'Users');
         $this->render('/admin/users');
     }
-    
+
 }
