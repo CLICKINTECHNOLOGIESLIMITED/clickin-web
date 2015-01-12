@@ -22,7 +22,7 @@ class UsersController extends AppController {
      *
      * @var array
      */
-    public $uses = array('User', 'Notification', 'Pushnotification');
+    public $uses = array('User', 'Notification');
 
     /**
      * components property
@@ -30,7 +30,7 @@ class UsersController extends AppController {
      * @var array
      * @access public
      */
-    public $components = array('Quickblox', 'Twilio.Twilio', 'Facebook', 'Sms', 'CakeS3.CakeS3' => array(
+    public $components = array('Quickblox', 'Twilio.Twilio', 'Facebook', 'Sms', 'Pushnotification', 'CakeS3.CakeS3' => array(
             's3Key' => AMAZON_S3_KEY,
             's3Secret' => AMAZON_S3_SECRET_KEY,
             'bucket' => BUCKET_NAME,
