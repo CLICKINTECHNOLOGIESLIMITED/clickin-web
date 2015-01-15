@@ -188,7 +188,7 @@ class User extends AppModel {
           ); */
         //$conditions['relationships.deleted']['$ne'] = 'yes';
         $params = array(
-            'fields' => array('_id', 'phone_no', 'name', 'vcode', 'verified', 'user_token', 'user_pic', 'device_token', 'password', 'relationships', 'QB_id'),
+            'fields' => array('_id', 'phone_no', 'name', 'vcode', 'verified', 'user_token', 'user_pic', 'device_token', 'password', 'relationships', 'QB_id', 'is_new_clickin_user'),
             'conditions' => $conditions,
             'order' => array('_id' => -1),
             'limit' => 20,
@@ -494,14 +494,17 @@ class User extends AppModel {
                             }
                         }
                     }
-                    if ($is_new_request == 1)
+                    if ($is_new_request == 1) {
                         $results["User"]["relationships"][$urKey]["request_initiator"] = true;
+                        $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
+                    }                        
                     if (isset($request_data->public))
                         $results["User"]["relationships"][$urKey]["public"] = ($request_data->public == 'true') ? true : false;
                     if (isset($request_data->deleted)) {
                         $results["User"]["relationships"][$urKey]["deleted"] = $request_data->deleted;
                         $results["User"]["relationships"][$urKey]["accepted"] = null;
                         $results["User"]["relationships"][$urKey]["public"] = null;
+                        $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
                     }
                 }
             }
@@ -530,14 +533,17 @@ class User extends AppModel {
                                 }
                             }
                         }
-                        if ($is_new_request == 1)
+                        if ($is_new_request == 1) {
                             unset($results["User"]["relationships"][$urKey]["request_initiator"]);
+                            $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
+                        }
                         if (isset($request_data->public))
                             $results["User"]["relationships"][$urKey]["public"] = ($request_data->public == 'true') ? true : false;
                         if (isset($request_data->deleted)) {
                             $results["User"]["relationships"][$urKey]["deleted"] = $request_data->deleted;
                             $results["User"]["relationships"][$urKey]["accepted"] = null;
                             $results["User"]["relationships"][$urKey]["public"] = null;
+                            $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
                         }
                     }
                 }
@@ -896,4 +902,33 @@ class User extends AppModel {
           return $resultArr; */
     }
 
+    /**
+     * updateRelationshipDataOfPartnerById method
+     * @param array $request_data
+     * @param array $userList
+     * @access public
+     */
+    public function updateRelationshipDataOfPartnerById($request_data, $userList = array()) {
+        if (isset($request_data) && count($userList) > 0) {
+            foreach ($userList as $urKey => $urVal) {
+                foreach ($userList[$urKey]["User"]["relationships"] as $rkey => $rvalue) {
+
+                    if ($request_data->relationship_id == (string) $userList[$urKey]["User"]["relationships"][$rkey]['id']) {
+                        if (isset($request_data->name))
+                            $userList[$urKey]["User"]["relationships"][$rkey]["partner_name"] = trim($request_data->name);
+                        if (isset($request_data->partner_pic))
+                            $userList[$urKey]["User"]["relationships"][$rkey]["partner_pic"] = trim($request_data->partner_pic);
+                        if (isset($request_data->partner_QB_id))
+                            $userList[$urKey]["User"]["relationships"][$rkey]["partner_QB_id"] = $request_data->partner_QB_id;
+                        if (isset($request_data->is_new_partner))
+                            $userList[$urKey]["User"]["relationships"][$rkey]["is_new_partner"] = $request_data->is_new_partner;
+                    }
+                }
+                $this->save($userList[$urKey]);
+            }
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

@@ -9,7 +9,7 @@
  *
  * CakePHP(tm) : Rapid Development Framework (http://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (http://cakefoundation.org)
- *newrequest
+ * newrequest
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
@@ -74,7 +74,7 @@ class RelationshipsController extends AppController {
                 $message = 'Wrong request method.';
                 break;
             // when phone no and partner phone no are same..
-            case !empty($request_data->phone_no) && !empty($request_data->partner_phone_no) && (trim($request_data->phone_no) == trim($request_data->partner_phone_no)):
+            case!empty($request_data->phone_no) && !empty($request_data->partner_phone_no) && (trim($request_data->phone_no) == trim($request_data->partner_phone_no)):
                 $success = false;
                 $status = BAD_REQUEST;
                 $message = 'Partner phone no should be different to your phone no.';
@@ -984,8 +984,8 @@ class RelationshipsController extends AppController {
                             $device_token = $partner_data['User']['device_token'];
                             $payLoadData = array(
                                 'Tp' => "RV",
-                                /*'Notfication Text' => ($request_data->public == 'true') ? trim($data[0]['User']['name']) . " has made your relationship public" :
-                                        trim($data[0]['User']['name']) . " has made your relationship private",*/
+                                /* 'Notfication Text' => ($request_data->public == 'true') ? trim($data[0]['User']['name']) . " has made your relationship public" :
+                                  trim($data[0]['User']['name']) . " has made your relationship private", */
                                 'chat_message' => ($request_data->public == 'true') ? trim($data[0]['User']['name']) . " made your relationship visible on their profile" :
                                         trim($data[0]['User']['name']) . " has hidden your relationship on their profile"
                             );
@@ -1108,8 +1108,8 @@ class RelationshipsController extends AppController {
 
                             $payLoadData = array(
                                 'Tp' => ($request_data->accepted == 'true') ? "CRA" : "CRR",
-                                /*'Notfication Text' => ($request_data->accepted == 'true') ? trim($data[0]['User']['name']) . " is now Clickin' with you!" :
-                                        "Oops! Sorry - " . trim($data[0]['User']['name']) . " has rejected your request",*/
+                                /* 'Notfication Text' => ($request_data->accepted == 'true') ? trim($data[0]['User']['name']) . " is now Clickin' with you!" :
+                                  "Oops! Sorry - " . trim($data[0]['User']['name']) . " has rejected your request", */
                                 'chat_message' => ($request_data->accepted == 'true') ? trim($data[0]['User']['name']) . " is now Clickin' with you!" :
                                         "Oops! Sorry - " . trim($data[0]['User']['name']) . " has rejected your request"
                             );
@@ -1392,6 +1392,117 @@ class RelationshipsController extends AppController {
                 $success = false;
                 $status = BAD_REQUEST;
                 $message = 'Relationship id cannot be blank.';
+                break;
+            // Parameters not found in request
+            case empty($request_data):
+                $success = false;
+                $status = BAD_REQUEST;
+                $message = 'Request cannot be empty.';
+                break;
+        }
+
+        $out = array(
+            "success" => $success,
+            "message" => $message
+        );
+
+        return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
+    }
+
+    /**
+     * resetnewuserandpartnerflag method
+     * this function is used for reset flags for new user and/or new partner..
+     * 
+     * @return \CakeResponse
+     * @access public
+     */
+    public function resetnewuserandpartnerflag() {
+        // Fetch the request data in JSON format and convert it into object
+        $request_data = $this->request->input('json_decode');
+        switch (true) {
+            // When request is not made using POST method
+            case!$this->request->isPost() :
+                $success = false;
+                $status = BAD_REQUEST;
+                $message = 'Wrong request method.';
+                break;
+            // Request is valid and phone no and name are present
+            case!empty($request_data) && !empty($request_data->phone_no) && !empty($request_data->user_token):
+
+                // Check if phone no exists
+                $data = $this->User->findUser($request_data->phone_no);
+
+                // Check if record exists
+                if (count($data) != 0) {
+                    // Check uuid entered is valid
+                    if ($data[0]['User']['verified'] === false) {
+                        $success = false;
+                        $status = UNAUTHORISED;
+                        $message = 'User not verified';
+                    } elseif ($request_data->user_token != $data[0]['User']['user_token']) { // User Token is not valid
+                        $success = false;
+                        $status = UNAUTHORISED;
+                        $message = 'User Token is invalid';
+                    } elseif ($request_data->is_new_partner == '' && $request_data->is_new_clickin_user == '') {
+                        $success = false;
+                        $status = BAD_REQUEST;
+                        $message = 'Request cannot be empty.';
+                    } elseif ($request_data->is_new_partner != '' && $request_data->relationship_id == '') {
+                        $success = false;
+                        $status = BAD_REQUEST;
+                        $message = 'Relationship id cannot be blank.';
+                    } elseif ($request_data->relationship_id != '' && $request_data->is_new_partner == '') {
+                        $success = false;
+                        $status = BAD_REQUEST;
+                        $message = 'Is new partner cannot be blank.';
+                    } else {
+
+                        if ($request_data->is_new_clickin_user!='') {
+                            if (count($data) > 0) {
+                                $data[0]["User"]["is_new_clickin_user"] = $request_data->is_new_clickin_user;
+                                $userData = $data[0];
+                                if ($this->User->save($userData)) {
+                                    $success = true;
+                                    $status = SUCCESS;
+                                    $message = 'Flag successfully reset.';
+                                } else {
+                                    $success = false;
+                                    $status = ERROR;
+                                    $message = 'There was a problem in processing your request';
+                                }
+                            }
+                        }
+                        if ($request_data->is_new_partner!='') {
+                            if ($this->User->updateRelationshipDataOfPartnerById($request_data, $data)) {
+                                $success = true;
+                                $status = SUCCESS;
+                                $message = 'Flag successfully reset.';
+                            } else {
+                                $success = false;
+                                $status = ERROR;
+                                $message = 'There was a problem in processing your request';
+                            }
+                        }
+                    }
+                }
+                // Return false if record not found
+                else {
+                    $success = false;
+                    $status = UNAUTHORISED;
+                    $message = 'Phone no. not registered.';
+                }
+                break;
+            // User Token blank in request
+            case!empty($request_data) && empty($request_data->user_token):
+                $success = false;
+                $status = BAD_REQUEST;
+                $message = 'User Token cannot be blank.';
+                break;
+            // Phone no. blank in request
+            case!empty($request_data) && empty($request_data->phone_no):
+                $success = false;
+                $status = BAD_REQUEST;
+                $message = 'Phone no. cannot be blank.';
                 break;
             // Parameters not found in request
             case empty($request_data):

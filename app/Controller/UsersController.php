@@ -516,7 +516,7 @@ class UsersController extends AppController {
                             'verified' => true,
                             'vcode' => '',
                             'badge_count' => 0,
-                            //'is_enable_push_notification' => 'yes',
+                            'is_new_clickin_user' => 'yes',
                             'is_active' => 'yes'
                         );
 
@@ -830,7 +830,7 @@ class UsersController extends AppController {
                                                 // Create a new entry for the notification to be shown to the new user
                                                 $new_partner_notification = $this->Notification->create();
                                                 $new_partner_notification['Notification']['user_id'] = $new_partner[0]['User']['_id'];
-                                                $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " updated profile pic.";
+                                                $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " has changed their profile picture";
                                                 $new_partner_notification['Notification']['type'] = 'updateprofilepic'; // invite
                                                 $new_partner_notification['Notification']['read'] = false;
                                                 $new_partner_notification['Notification']['update_user_id'] = $data[0]['User']['_id'];
@@ -839,7 +839,7 @@ class UsersController extends AppController {
                                                 // Saving the new notification for the user
                                                 $this->Notification->save($new_partner_notification);
 
-                                                $message = trim($data[0]['User']['name']) . " updated profile pic.";
+                                                $message = trim($data[0]['User']['name']) . " has changed their profile picture";
                                                 $device_type = $new_partner[0]['User']['device_type'];
                                                 $device_token = $new_partner[0]['User']['device_token'];
                                                 $payLoadData = array(
@@ -872,7 +872,7 @@ class UsersController extends AppController {
                                                 // Create a new entry for the notification to be shown to the new user
                                                 $new_partner_notification = $this->Notification->create();
                                                 $new_partner_notification['Notification']['user_id'] = $new_partner[0]['User']['_id'];
-                                                $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " updated profile pic.";
+                                                $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " has changed their profile picture";
                                                 $new_partner_notification['Notification']['type'] = 'updateprofilepic'; // invite
                                                 $new_partner_notification['Notification']['read'] = false;
                                                 $new_partner_notification['Notification']['update_user_id'] = $data[0]['User']['_id'];
@@ -881,7 +881,7 @@ class UsersController extends AppController {
                                                 // Saving the new notification for the user
                                                 $this->Notification->save($new_partner_notification);
 
-                                                $message = trim($data[0]['User']['name']) . " updated profile pic.";
+                                                $message = trim($data[0]['User']['name']) . " has changed their profile picture";
                                                 $device_type = $results['User']['device_type'];
                                                 $device_token = $results['User']['device_token'];
                                                 $payLoadData = array(

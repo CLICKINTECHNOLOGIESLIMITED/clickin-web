@@ -1246,7 +1246,7 @@ class NewsfeedController extends AppController {
                             $notificationArr = $this->Notification->create();
                             $notificationArr['Notification']['_id'] = new MongoId();
                             $notificationArr['Notification']['user_id'] = $dataArray['Newsfeeds']['user_id'];
-                            $notificationArr['Notification']['notification_msg'] = $userName.' reported your post';
+                            $notificationArr['Notification']['notification_msg'] = 'This post has been reported'; //$userName.' reported your post';
                             $notificationArr['Notification']['type'] = 'report';
                             $notificationArr['Notification']['newsfeed_id'] = $newsfeedId;
                             $notificationArr['Notification']['chat_id'] = $newsfeedChatId;
@@ -1254,7 +1254,7 @@ class NewsfeedController extends AppController {
                             $this->Notification->save($notificationArr);
                             
                             // send push notification...
-                            $message = $userName.' reported your post';
+                            $message = 'This post has been reported'; //$userName.' reported your post';
                             /*if(isset($data[0]['User']['is_enable_push_notification']) && $data[0]['User']['is_enable_push_notification'] == 'yes' 
                                         || !isset($data[0]['User']['is_enable_push_notification']))
                             {*/
