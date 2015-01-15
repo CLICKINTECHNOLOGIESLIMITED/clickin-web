@@ -24,7 +24,7 @@ class User extends AppModel {
     public function findUser($phone_no) {
         $params = array(
             'fields' => array(
-                '_id', 'phone_no', 'name', 'vcode', 'verified', 'user_token', 'device_token', 'device_type', 'email',
+                '_id', 'phone_no', 'name', 'vcode', 'verified', 'user_token', 'device_token', 'device_type', 'email', 'is_new_clickin_user',
                 'password', 'relationships', 'QB_id', 'user_pic', 'follower', 'following', 'unread_notifications_count','is_active'
             ),
             'conditions' => array('phone_no' => $phone_no),
@@ -45,7 +45,7 @@ class User extends AppModel {
      */
     public function fetchUserProfile($phone_no) {
         $params = array(
-            'fields' => array('_id', 'name', 'QB_id', 'user_pic', 'dob', 'gender', 'unread_notifications_count', 'following', 'follower', 'city', 'country', 'email','is_enable_push_notification'),
+            'fields' => array('_id', 'name', 'QB_id', 'user_pic', 'dob', 'gender', 'unread_notifications_count', 'following', 'follower', 'city', 'country', 'email','is_enable_push_notification', 'is_new_clickin_user'),
             'conditions' => array('phone_no' => $phone_no, "verified" => true),
             'order' => array('_id' => -1),
             'limit' => 20,
@@ -133,7 +133,7 @@ class User extends AppModel {
     public function checkEmailExists($email, $phone_no = '') {
 
         $params = array(
-            'fields' => array('phone_no', 'name', 'vcode', 'verified', 'user_token', 'email'),
+            'fields' => array('phone_no', 'name', 'vcode', 'verified', 'user_token', 'email', 'is_new_clickin_user'),
             'conditions' => array('email' => array('$regex' => $email, '$options' => '-i')),
             'order' => array('_id' => -1),
             'limit' => 20,
