@@ -237,7 +237,8 @@ class RelationshipsController extends AppController {
                             'accepted' => NULL, // false // TODO :: By default invite accepted for demo purpose
                             'public' => true, // false //  TODO ::Make the relationship public by default
                             'deleted' => 'no',
-                            'last_chat_id' => ''
+                            'last_chat_id' => '',
+                            'is_new_partner' => 'yes'
                         );
 
                         // Save the new relationship array into the partner / requested user's relationship array
@@ -260,7 +261,8 @@ class RelationshipsController extends AppController {
                             'accepted' => NULL, // false // TODO :: By default invite accepted for demo purpose
                             'public' => true, // false //  TODO ::Make the relationship public by default
                             'deleted' => 'no',
-                            'last_chat_id' => ''
+                            'last_chat_id' => '',
+                            'is_new_partner' => 'yes'
                         );
 
                         // Insert a new entry into the relationships collection
