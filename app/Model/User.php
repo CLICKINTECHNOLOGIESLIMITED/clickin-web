@@ -504,7 +504,7 @@ class User extends AppModel {
                         $results["User"]["relationships"][$urKey]["deleted"] = $request_data->deleted;
                         $results["User"]["relationships"][$urKey]["accepted"] = null;
                         $results["User"]["relationships"][$urKey]["public"] = null;
-                        $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
+                        $results["User"]["relationships"][$urKey]["is_new_partner"] = 'no';
                     }
                 }
             }
@@ -543,7 +543,7 @@ class User extends AppModel {
                             $results["User"]["relationships"][$urKey]["deleted"] = $request_data->deleted;
                             $results["User"]["relationships"][$urKey]["accepted"] = null;
                             $results["User"]["relationships"][$urKey]["public"] = null;
-                            $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
+                            $results["User"]["relationships"][$urKey]["is_new_partner"] = 'no';
                         }
                     }
                 }
