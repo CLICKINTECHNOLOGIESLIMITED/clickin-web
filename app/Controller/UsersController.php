@@ -803,7 +803,7 @@ class UsersController extends AppController {
                                 $this->User->updateFollowerFollowingDataOfPartner($request_data, $userFollowerList);
 
                             // send PN and notifications to partners
-                            if (!empty($request_data->user_pic)) {
+                            if (!empty($request_data->user_pic) && !empty($request_data->profile_image_change) && $request_data->profile_image_change =='yes') {
                                 // Get relationships for the user which have been accepted by partner
                                 $user_data = $this->User->findRelationshipsByType($request_data->user_token, $request_data->phone_no, TRUE);
                                 // Get relationships for the user which is pending on partner
@@ -844,7 +844,8 @@ class UsersController extends AppController {
                                                 $device_token = $new_partner[0]['User']['device_token'];
                                                 $payLoadData = array(
                                                     'Tp' => "Upp",
-                                                    'chat_message' => $message
+                                                    'chat_message' => $message,
+                                                    'phone_no' => $request_data->phone_no
                                                 );
                                                 if ($device_type != '' && $device_token != '') {
                                                     $this->Pushnotification->sendMessage($device_type, $device_token, $message, $payLoadData);
@@ -886,7 +887,8 @@ class UsersController extends AppController {
                                                 $device_token = $results['User']['device_token'];
                                                 $payLoadData = array(
                                                     'Tp' => "Upp",
-                                                    'chat_message' => $message
+                                                    'chat_message' => $message,
+                                                    'phone_no' => $request_data->phone_no
                                                 );
                                                 if ($device_type != '' && $device_token != '') {
                                                     $this->Pushnotification->sendMessage($device_type, $device_token, $message, $payLoadData);
