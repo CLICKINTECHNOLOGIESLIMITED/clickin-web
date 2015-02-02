@@ -105,7 +105,7 @@ class FetchchatShell extends AppShell {
                                 $currentCardStatus = 'played';
                                 break;
                             case 'countered':
-                                $currentCardStatus = 'played';
+                                $currentCardStatus = 'playing';
                                 break;
                             case 'rejected':
                                 $currentCardStatus = 'played';

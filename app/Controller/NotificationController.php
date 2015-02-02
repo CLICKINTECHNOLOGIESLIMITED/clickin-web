@@ -134,6 +134,13 @@ class NotificationController extends AppController {
                     $notificationArray[$rCount]['invite_name'] = $dataArray[$notkey]['Notification']['invite_name'];
                     $notificationArray[$rCount]['invite_user_pic'] = $dataArray[$notkey]['Notification']['invite_user_pic'];
                 }
+                // user profile pic updation if exist..
+                if(isset($dataArray[$notkey]['Notification']['update_user_id']))
+                {
+                    $notificationArray[$rCount]['update_user_id'] = $dataArray[$notkey]['Notification']['update_user_id'];
+                    $notificationArray[$rCount]['update_name'] = $dataArray[$notkey]['Notification']['update_name'];
+                    $notificationArray[$rCount]['update_user_pic'] = $dataArray[$notkey]['Notification']['update_user_pic'];
+                }
                 
                 if($dataArray[$notkey]['Notification']['type'] == 'share')
                 {

@@ -803,99 +803,18 @@ class UsersController extends AppController {
                                 $this->User->updateFollowerFollowingDataOfPartner($request_data, $userFollowerList);
 
                             // send PN and notifications to partners
-                            if (!empty($request_data->user_pic) && !empty($request_data->profile_image_change) && $request_data->profile_image_change =='yes') {
+                            if (!empty($request_data->user_pic) && !empty($request_data->profile_image_change) && $request_data->profile_image_change == 'yes') {
                                 // Get relationships for the user which have been accepted by partner
                                 $user_data = $this->User->findRelationshipsByType($request_data->user_token, $request_data->phone_no, TRUE);
                                 // Get relationships for the user which is pending on partner
                                 $user_data_pending = $this->User->findRelationshipsByType($request_data->user_token, $request_data->phone_no, NULL);
                                 //print_r($user_data);
                                 //print_r($user_data_pending);
-
                                 if (count($user_data) > 0) {
-                                    foreach ($user_data as $udkey => $udvalue) {
-                                        foreach ($udvalue['User']['relationships'] as $udvalue1) {
-                                            $params = array(
-                                                'fields' => array('unread_notifications_count', '_id', 'device_type', 'device_token'),
-                                                'conditions' => array(
-                                                    '_id' => new MongoId($udvalue1['partner_id'])
-                                            ));
-                                            $results = $this->User->find('first', $params);
-
-                                            $results['User']['unread_notifications_count'] += 1;
-                                            // Creating a new record for Partner's data in Users collection
-                                            if ($this->User->save($results)) {
-
-                                                // Fetch the new partner's details
-                                                $new_partner = $this->User->findUser($udvalue1['phone_no']);
-                                                // Create a new entry for the notification to be shown to the new user
-                                                $new_partner_notification = $this->Notification->create();
-                                                $new_partner_notification['Notification']['user_id'] = $new_partner[0]['User']['_id'];
-                                                $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " has changed their profile picture";
-                                                $new_partner_notification['Notification']['type'] = 'updateprofilepic'; // invite
-                                                $new_partner_notification['Notification']['read'] = false;
-                                                $new_partner_notification['Notification']['update_user_id'] = $data[0]['User']['_id'];
-                                                $new_partner_notification['Notification']['update_name'] = trim($data[0]['User']['name']);
-                                                $new_partner_notification['Notification']['update_user_pic'] = $data[0]['User']['user_pic'];
-                                                // Saving the new notification for the user
-                                                $this->Notification->save($new_partner_notification);
-
-                                                $message = trim($data[0]['User']['name']) . " has changed their profile picture";
-                                                $device_type = $new_partner[0]['User']['device_type'];
-                                                $device_token = $new_partner[0]['User']['device_token'];
-                                                $payLoadData = array(
-                                                    'Tp' => "Upp",
-                                                    'chat_message' => $message,
-                                                    'phone_no' => $request_data->phone_no
-                                                );
-                                                if ($device_type != '' && $device_token != '') {
-                                                    $this->Pushnotification->sendMessage($device_type, $device_token, $message, $payLoadData);
-                                                }
-                                            }
-                                        }
-                                    }
+                                    $this->sendPNOnProfilePicUpdate($request_data, $data, $user_data);
                                 }
                                 if (count($user_data_pending) > 0) {
-                                    foreach ($user_data_pending as $udpkey => $udpvalue) {
-                                        foreach ($udpvalue['User']['relationships'] as $udvalue1) {
-                                            $params = array(
-                                                'fields' => array('unread_notifications_count', '_id', 'device_type', 'device_token'),
-                                                'conditions' => array(
-                                                    '_id' => new MongoId($udvalue1['partner_id'])
-                                            ));
-                                            $results = $this->User->find('first', $params);
-
-                                            $results['User']['unread_notifications_count'] += 1;
-
-                                            // Creating a new record for Partner's data in Users collection
-                                            if ($this->User->save($results)) {
-                                                // Fetch the new partner's details
-                                                $new_partner = $this->User->findUser($udvalue1['phone_no']);
-                                                // Create a new entry for the notification to be shown to the new user
-                                                $new_partner_notification = $this->Notification->create();
-                                                $new_partner_notification['Notification']['user_id'] = $new_partner[0]['User']['_id'];
-                                                $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " has changed their profile picture";
-                                                $new_partner_notification['Notification']['type'] = 'updateprofilepic'; // invite
-                                                $new_partner_notification['Notification']['read'] = false;
-                                                $new_partner_notification['Notification']['update_user_id'] = $data[0]['User']['_id'];
-                                                $new_partner_notification['Notification']['update_name'] = trim($data[0]['User']['name']);
-                                                $new_partner_notification['Notification']['update_user_pic'] = $data[0]['User']['user_pic'];
-                                                // Saving the new notification for the user
-                                                $this->Notification->save($new_partner_notification);
-
-                                                $message = trim($data[0]['User']['name']) . " has changed their profile picture";
-                                                $device_type = $results['User']['device_type'];
-                                                $device_token = $results['User']['device_token'];
-                                                $payLoadData = array(
-                                                    'Tp' => "Upp",
-                                                    'chat_message' => $message,
-                                                    'phone_no' => $request_data->phone_no
-                                                );
-                                                if ($device_type != '' && $device_token != '') {
-                                                    $this->Pushnotification->sendMessage($device_type, $device_token, $message, $payLoadData);
-                                                }
-                                            }
-                                        }
-                                    }
+                                    $this->sendPNOnProfilePicUpdate($request_data, $data, $user_data_pending);
                                 }
                             }
 
@@ -990,6 +909,49 @@ class UsersController extends AppController {
         );
 
         return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
+    }
+
+    public function sendPNOnProfilePicUpdate($request_data, $data, $userData) {
+        foreach ($userData as $udkey => $udvalue) {
+            foreach ($udvalue['User']['relationships'] as $udvalue1) {
+                $params = array(
+                    'fields' => array('unread_notifications_count', '_id', 'device_type', 'device_token'),
+                    'conditions' => array(
+                        '_id' => new MongoId($udvalue1['partner_id'])
+                ));
+                $results = $this->User->find('first', $params);
+
+                $results['User']['unread_notifications_count'] += 1;
+                // Creating a new record for Partner's data in Users collection
+                if ($this->User->save($results)) {
+                    // Fetch the new partner's details
+                    $new_partner = $this->User->findUser($udvalue1['phone_no']);
+                    // Create a new entry for the notification to be shown to the new user
+                    $new_partner_notification = $this->Notification->create();
+                    $new_partner_notification['Notification']['user_id'] = $new_partner[0]['User']['_id'];
+                    $new_partner_notification['Notification']['notification_msg'] = trim($data[0]['User']['name']) . " has changed their profile picture";
+                    $new_partner_notification['Notification']['type'] = 'updateprofilepic'; // invite
+                    $new_partner_notification['Notification']['read'] = false;
+                    $new_partner_notification['Notification']['update_user_id'] = $data[0]['User']['_id'];
+                    $new_partner_notification['Notification']['update_name'] = trim($data[0]['User']['name']);
+                    $new_partner_notification['Notification']['update_user_pic'] = $data[0]['User']['user_pic'];
+                    // Saving the new notification for the user
+                    $this->Notification->save($new_partner_notification);
+
+                    $message = trim($data[0]['User']['name']) . " has changed their profile picture";
+                    $device_type = $new_partner[0]['User']['device_type'];
+                    $device_token = $new_partner[0]['User']['device_token'];
+                    $payLoadData = array(
+                        'Tp' => "Upp",
+                        'chat_message' => $message,
+                        'phone_no' => $request_data->phone_no
+                    );
+                    if ($device_type != '' && $device_token != '') {
+                        $this->Pushnotification->sendMessage($device_type, $device_token, $message, $payLoadData);
+                    }
+                }
+            }
+        }
     }
 
     /**
