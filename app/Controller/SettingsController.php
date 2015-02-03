@@ -259,7 +259,7 @@ class SettingsController extends AppController {
                         $dataArray['User']['is_active'] = 'no';
                         $dataArray['User']['other_reason'] = !empty($request_data->other_reason) ? trim($request_data->other_reason) : '';
                         $flag = $this->User->save($dataArray);
-                        
+
                         if ($flag) {
                             // send email to user's email address..
                             if (!empty($request_data->email_opt_out) && $request_data->email_opt_out == 'yes') {
@@ -448,10 +448,10 @@ class SettingsController extends AppController {
                 // && !empty($request_data->comment):
                 // Check if phone no exists
                 $data = $this->User->findUserByEmail(trim($request_data->email));
-                
+
                 // Check if record exists
                 if (count($data) != 0) {
-                    
+
                     $userEmail = $request_data->email;
                     $userName = trim($data[0]['User']['name']);
                     $recoveryStr = $this->generateRandomString(12);
@@ -462,7 +462,7 @@ class SettingsController extends AppController {
 
                     if ($this->User->save($dataArray)) {
 
-                        $recoveryLink = HOST_ROOT_PATH . 'recover/password/id:' . (string) $data[0]['User']['_id'] . '/rid:'.$recoveryStr;
+                        $recoveryLink = HOST_ROOT_PATH . 'recover/password/id:' . (string) $data[0]['User']['_id'] . '/rid:' . $recoveryStr;
                         // send mail to user..
                         $messageEmail = "Hi $userName,<br><br>
                         You can recover your password by using this link : <a href='$recoveryLink'>$recoveryLink</a><br><br>
@@ -482,7 +482,7 @@ class SettingsController extends AppController {
                         $message = 'Password has been sent to your email.';
                         //$message = 'A password recovery link has been sent to your email.';
                     } else {
-                    
+
                         $success = false;
                         $status = ERROR;
                         $message = 'There was a problem in processing your request';
@@ -524,14 +524,13 @@ class SettingsController extends AppController {
      * @return string
      */
     function generateRandomString($length = 8) {
-        
+
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $randomString = '';
         for ($i = 0; $i < $length; $i++) {
             $randomString .= $characters[rand(0, strlen($characters) - 1)];
         }
         return $randomString;
-        
     }
 
     /**
@@ -572,6 +571,11 @@ class SettingsController extends AppController {
 
                         $dataArray = array();
                         $dataArray['User']['_id'] = $data[0]['User']['_id'];
+                        // when user will logout then we will get this variable for reset device details.
+                        if (isset($request_data->reset_device) && $request_data->reset_device == 'yes') {
+                            $dataArray['User']['device_type'] = '';
+                            $dataArray['User']['device_token'] = '';
+                        }
                         $dataArray['User']['last_seen_time'] = new MongoDate();
 
                         if ($this->User->save($dataArray)) {
@@ -619,7 +623,7 @@ class SettingsController extends AppController {
 
         return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
     }
-    
+
 }
 
 ?>

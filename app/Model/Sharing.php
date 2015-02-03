@@ -80,7 +80,7 @@ class Sharing extends AppModel {
                                 $newsfeed_id = $newsFeed->getLastInsertID();
 
                                 // save comment if any in request data..
-                                if ($otherDataArray['comment'] != '') {
+                                if (trim($otherDataArray['comment']) != '') {
                                     $newsfeedArray = $newsFeed->find('first', array('conditions' => array('_id' => new MongoId($newsfeed_id))));
                                     if (count($newsfeedArray) > 0) {
                                         $newsfeed_user_id = $newsfeedArray['Newsfeeds']['user_id']; //$relationUserDetail['User']['_id'];
