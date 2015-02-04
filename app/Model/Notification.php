@@ -72,11 +72,16 @@ class Notification extends AppModel {
             $maxNotificationId = $results[0]['Notification']['_id'];
 
             // update all notifications of this user as seen from max id to lower ids..
-            $conditionArr = array('user_id' => $user_id, "_id" => array('$lt' => $maxNotificationId));
+            foreach ($results as $key => $result) {
+                $results[$key]['Notification']['read'] = true;
+                $this->save($results[$key]);
+            }
+            
+            /*$conditionArr = array('user_id' => $user_id, "_id" => array('$lt' => $maxNotificationId));
             $this->updateAll(
                     array('read' => TRUE), array($conditionArr)
-            );
-
+            );*/
+            
             // set last seen notification id for that user..
             $params = array('_id' => $user_id, 'last_seen_notification_id' => $maxNotificationId, 'unread_notifications_count' => 0);
             $User = ClassRegistry::init('User');
