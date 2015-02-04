@@ -70,11 +70,11 @@ class Notification extends AppModel {
         if (count($results) > 0) {
             // to do set read flag true in notification..
             $maxNotificationId = $results[0]['Notification']['_id'];
-
+            $resultNotifications = $results;
             // update all notifications of this user as seen from max id to lower ids..
-            foreach ($results as $key => $result) {
-                $results[$key]['Notification']['read'] = true;
-                $this->save($results[$key]);
+            foreach ($resultNotifications as $key => $result) {
+                $resultNotifications[$key]['Notification']['read'] = true;
+                $this->save($resultNotifications[$key]);
             }
             
             /*$conditionArr = array('user_id' => $user_id, "_id" => array('$lt' => $maxNotificationId));
