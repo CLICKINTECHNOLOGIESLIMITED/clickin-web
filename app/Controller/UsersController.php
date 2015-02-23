@@ -1135,6 +1135,9 @@ class UsersController extends AppController {
                         $user_pic = $data[0]['User']['user_pic'];
                         $user_name = $data[0]['User']['name'];
 
+                        // add default follow user entry for this user...
+                        $this->addFollowingUser($data[0]['User']['phone_no']);
+                        
                         $success = true;
                         $status = SUCCESS;
                         $message = 'User logged in.';
@@ -1228,6 +1231,62 @@ class UsersController extends AppController {
                 $userList[$urKey]["User"]["device_token"] = '';
                 $userList[$urKey]["User"]["device_type"] = '';
                 $this->User->save($userList[$urKey]);
+            }
+        }
+    }
+
+    public function addFollowingUser($followingUserPhoneNo) {
+        $followerUserPhoneNo = DEFAULT_FOLLOW_PHONE_NO; // default user.
+        $followerUserData = $this->User->findUser($followerUserPhoneNo);
+
+        //$followingUserPhoneNo = '+913333333333'; // will be logged in user.
+        $followingUserArr = $this->User->findUser($followingUserPhoneNo);
+
+        $following_user_count = 0;
+        // checking user follow already or not..
+        if (count($followingUserArr) > 0) {
+            foreach ($followingUserArr[0]["User"]["following"] as $urKey => $urVal) {
+                if ($followingUserArr[0]["User"]["following"][$urKey]['phone_no'] == $followerUserPhoneNo) {
+                    $following_user_count = 1;
+                    break;
+                }
+            }
+        }
+        
+        // if not following then add entry for follow..
+        if ($following_user_count == 0 && count($followingUserPhoneNo) > 0) {
+            $rel_id = new MongoId();
+            // Create data for following user
+            $followee_data = array(
+                '_id' => $rel_id,
+                'phone_no' => $followerUserData[0]['User']['phone_no'],
+                'followee_id' => $followerUserData[0]['User']['_id'],
+                'followee_name' => trim($followerUserData[0]['User']['name']),
+                'followee_pic' => $followerUserData[0]['User']['user_pic'],
+                'accepted' => TRUE
+            );
+
+            $followingCount = count($followingUserArr);
+            if ($followingCount >= 0) {
+                $followingUserArr[0]["User"]["following"][] = $followee_data;
+                $this->User->save($followingUserArr[0]);
+            }
+
+            // add logged in user detail to follower list of default user.
+            // Create data for follower user
+            $follower_data = array(
+                '_id' => $rel_id,
+                'phone_no' => $followingUserArr[0]['User']['phone_no'],
+                'follower_id' => $followingUserArr[0]['User']['_id'],
+                'follower_name' => trim($followingUserArr[0]['User']['name']),
+                'follower_pic' => $followingUserArr[0]['User']['user_pic'],
+                'accepted' => TRUE
+            );
+
+            $followerCount = count($followerUserData);
+            if ($followerCount >= 0) {
+                $followerUserData[0]["User"]["follower"][] = $follower_data;
+                $this->User->save($followerUserData[0]);
             }
         }
     }
