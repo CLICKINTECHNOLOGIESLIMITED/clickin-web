@@ -399,16 +399,20 @@ class RelationshipsController extends AppController {
                         //$relationship_data = $user_data[0]['User']['relationships'];
                         //if(count($user_data_pending)>0)
                         //    $relationship_data = array_merge ( $user_data[0]['User']['relationships'], $user_data_pending[0]['User']['relationships']);
+                        
+                        // Fetch details of the searched phone no.
+                        $user_details = $this->User->fetchUserProfile($request_data->phone_no);
+                        $follower = $user_details['User']['follower'];
+                        $following = $user_details['User']['following'];
 
                         if (count($relationship_data) != 0) {
                             // rearrange array values..
                             $relationship_data = array_values($relationship_data);
-
                             $success = true;
                             $status = SUCCESS;
                             $message = 'Relationships data found';
                         } else {
-                            $success = false;
+                            $success = count($user_details) > 0 ? true : false;
                             $status = SUCCESS;
                             $message = 'No relationships found';
                         }
@@ -446,17 +450,13 @@ class RelationshipsController extends AppController {
             "message" => $message
         );
 
-        // Fetch details of the searched phone no.
-        $user_details = $this->User->fetchUserProfile($request_data->phone_no);
-        $follower = $user_details['User']['follower'];
-        $following = $user_details['User']['following'];
-        $out['user_pic'] = $data[0]['User']['user_pic'];
-
-        if ($success)
+        if ($success) {
+            $out['user_pic'] = $data[0]['User']['user_pic'];
             $out['relationships'] = $relationship_data;
-        
-        $out['follower'] = $follower;
-        $out['following'] = $following;
+            $out['follower'] = $follower;
+            $out['following'] = $following;
+        }
+
         return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
     }
 
