@@ -537,7 +537,10 @@ class UsersController extends AppController {
                                 $userList = $this->User->findUserRelationshipsByNo($request_data->phone_no);
                                 if (count($userList) > 0)
                                     $this->User->updateRelationshipDataOfPartner($request_data, $userList);
-
+                                
+                                // add following entry of default user.
+                                $this->addFollowingUser($data[0]['User']['phone_no']);
+                                
                                 $success = true;
                                 $status = SUCCESS;
                                 $message = 'Email updated';
