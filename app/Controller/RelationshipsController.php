@@ -399,13 +399,13 @@ class RelationshipsController extends AppController {
                         //$relationship_data = $user_data[0]['User']['relationships'];
                         //if(count($user_data_pending)>0)
                         //    $relationship_data = array_merge ( $user_data[0]['User']['relationships'], $user_data_pending[0]['User']['relationships']);
+                        
+                        // Fetch details of the searched phone no.
+                        $user_details = $this->User->fetchUserProfile($request_data->phone_no);
+                        $follower = $user_details['User']['follower'];
+                        $following = $user_details['User']['following'];
 
                         if (count($relationship_data) != 0) {
-
-                            // Fetch details of the searched phone no.
-                            $user_details = $this->User->fetchUserProfile($request_data->phone_no);
-                            $follower = $user_details['User']['follower'];
-                            $following = $user_details['User']['following'];
                             // rearrange array values..
                             $relationship_data = array_values($relationship_data);
 
@@ -1459,7 +1459,7 @@ class RelationshipsController extends AppController {
                         $message = 'Is new partner cannot be blank.';
                     } else {
 
-                        if ($request_data->is_new_clickin_user!='') {
+                        if ($request_data->is_new_clickin_user != '') {
                             if (count($data) > 0) {
                                 $data[0]["User"]["is_new_clickin_user"] = $request_data->is_new_clickin_user;
                                 $userData = $data[0];
@@ -1474,7 +1474,7 @@ class RelationshipsController extends AppController {
                                 }
                             }
                         }
-                        if ($request_data->is_new_partner!='') {
+                        if ($request_data->is_new_partner != '') {
                             if ($this->User->updateRelationshipDataOfPartnerById($request_data, $data)) {
                                 $success = true;
                                 $status = SUCCESS;
