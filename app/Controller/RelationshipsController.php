@@ -412,6 +412,7 @@ class RelationshipsController extends AppController {
                             $status = SUCCESS;
                             $message = 'Relationships data found';
                         } else {
+                            $relationship_data = array();
                             $success = count($user_details) > 0 ? true : false;
                             $status = SUCCESS;
                             $message = 'No relationships found';
