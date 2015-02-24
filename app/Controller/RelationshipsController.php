@@ -399,11 +399,6 @@ class RelationshipsController extends AppController {
                         //$relationship_data = $user_data[0]['User']['relationships'];
                         //if(count($user_data_pending)>0)
                         //    $relationship_data = array_merge ( $user_data[0]['User']['relationships'], $user_data_pending[0]['User']['relationships']);
-                        
-                        // Fetch details of the searched phone no.
-                        $user_details = $this->User->fetchUserProfile($request_data->phone_no);
-                        $follower = $user_details['User']['follower'];
-                        $following = $user_details['User']['following'];
 
                         if (count($relationship_data) != 0) {
                             // rearrange array values..
@@ -452,6 +447,12 @@ class RelationshipsController extends AppController {
         );
 
         if ($success) {
+
+            // Fetch details of the searched phone no.
+            $user_details = $this->User->fetchUserProfile($request_data->phone_no);
+            $follower = $user_details['User']['follower'];
+            $following = $user_details['User']['following'];
+
             $out['user_pic'] = $data[0]['User']['user_pic'];
             $out['relationships'] = $relationship_data;
             $out['follower'] = $follower;
