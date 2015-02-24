@@ -446,19 +446,17 @@ class RelationshipsController extends AppController {
             "message" => $message
         );
 
-        if ($success) {
+        // Fetch details of the searched phone no.
+        $user_details = $this->User->fetchUserProfile($request_data->phone_no);
+        $follower = $user_details['User']['follower'];
+        $following = $user_details['User']['following'];
+        $out['user_pic'] = $data[0]['User']['user_pic'];
 
-            // Fetch details of the searched phone no.
-            $user_details = $this->User->fetchUserProfile($request_data->phone_no);
-            $follower = $user_details['User']['follower'];
-            $following = $user_details['User']['following'];
-
-            $out['user_pic'] = $data[0]['User']['user_pic'];
+        if ($success)
             $out['relationships'] = $relationship_data;
-            $out['follower'] = $follower;
-            $out['following'] = $following;
-        }
-
+        
+        $out['follower'] = $follower;
+        $out['following'] = $following;
         return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
     }
 
