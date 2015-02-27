@@ -147,7 +147,7 @@ class FacebookComponent extends Component {
                         $heightVar = '';
                     } elseif ($chatDetailArr['Chat']['type'] == 5) {
                         $width = ($chatDetailArr['Chat']['cards'][8] != '') ? 271 : 259;
-                        $height = ($chatDetailArr['Chat']['cards'][8] != '') ? 357 : 259;
+                        $height = ($chatDetailArr['Chat']['cards'][8] != '') ? 357 : 341;
                         $heightVar = "--crop-h $height";
                     }
 
