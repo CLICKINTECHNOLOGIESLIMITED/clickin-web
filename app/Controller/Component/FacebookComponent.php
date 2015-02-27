@@ -141,14 +141,18 @@ class FacebookComponent extends Component {
 
                 if ($chatDetailArr['Chat']['type'] != 3 && $chatDetailArr['Chat']['type'] != 4) {
                     $width = 650;
+                    $heightVar = '';
                     if ($chatDetailArr['Chat']['type'] == 2 || $chatDetailArr['Chat']['type'] == 6) {
                         list($width, $height) = getimagesize($chatDetailArr['Chat']['content']);
+                        $heightVar = '';
                     } elseif ($chatDetailArr['Chat']['type'] == 5) {
                         $width = ($chatDetailArr['Chat']['cards'][8] != '') ? 271 : 259;
+                        $height = ($chatDetailArr['Chat']['cards'][8] != '') ? 357 : 259;
+                        $heightVar = "--crop-h $height";
                     }
 
                     //xvfb-run --server-args="-screen 0, 1024x680x24" ./wkhtmltoimage --use-xserver --quality 83 --javascript-delay 200 http://google.com pawan.png
-                    $execOptions = "--use-xserver --load-error-handling ignore --crop-w $width --crop-x 0 --crop-y 0 --quality 95 --javascript-delay 300";
+                    $execOptions = "--use-xserver --load-error-handling ignore --crop-w $width $heightVar --crop-x 0 --crop-y 0 --quality 95 --javascript-delay 300";
                     //$execOptions = "--use-xserver --load-error-handling ignore --crop-w 550 --crop-x 245 --crop-y 0 --quality 95 --javascript-delay 300";
                     // run wkhtmltoimage for capturing screenshot from url..
                     exec("xvfb-run --server-args=\"-screen 0, 1024x680x24\" /usr/local/bin/wkhtmltoimage $execOptions $screenshotUrl $srcImagePath");
