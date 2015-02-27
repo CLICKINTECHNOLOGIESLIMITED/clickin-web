@@ -105,7 +105,7 @@ class FacebookComponent extends Component {
 
             $params = array("access_token" => $access_token);
             if (count($userDetail) > 0 && count($chatDetailArr) > 0) {
-                $chatTypeArr = array('1' => 'Text', '2' => 'Image', '3' => 'Audio', '4' => 'Video', '5' => 'Cards', '6' => 'Location');
+                $chatTypeArr = array('1' => 'Text', '2' => 'Image', '3' => 'Audio', '4' => 'Video', '5' => 'Card', '6' => 'Location');
 
                 $screenshotUrl = HOST_ROOT_PATH . "pages/getscreenshot/chatid:" . $sharingDetailArr['Sharing']['chat_id'] . "/shareid:" . $sharingId;
 
