@@ -236,6 +236,7 @@
         font-weight: 700;
         font-size: 30px;
         line-height: 33px;
+        width: 260px;
     }
 
 </style>
