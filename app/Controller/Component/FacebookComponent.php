@@ -144,7 +144,7 @@ class FacebookComponent extends Component {
                     if ($chatDetailArr['Chat']['type'] == 2 || $chatDetailArr['Chat']['type'] == 6) {
                         list($width, $height) = getimagesize($chatDetailArr['Chat']['content']);
                     } elseif ($chatDetailArr['Chat']['type'] == 5) {
-                        $width = ($chatDetailArr['Chat']['cards'][8] != '') ? 260 : 271;
+                        $width = ($chatDetailArr['Chat']['cards'][8] != '') ? 259 : 271;
                     }
 
                     //xvfb-run --server-args="-screen 0, 1024x680x24" ./wkhtmltoimage --use-xserver --quality 83 --javascript-delay 200 http://google.com pawan.png
