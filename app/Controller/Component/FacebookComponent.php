@@ -138,17 +138,16 @@ class FacebookComponent extends Component {
                     $this->User->save($userDetailArr);
                 }
 
-
+                $heightVar = '';                    
                 if ($chatDetailArr['Chat']['type'] != 3 && $chatDetailArr['Chat']['type'] != 4) {
                     $width = 650;
-                    $heightVar = '';
                     if ($chatDetailArr['Chat']['type'] == 2 || $chatDetailArr['Chat']['type'] == 6) {
                         list($width, $height) = getimagesize($chatDetailArr['Chat']['content']);
-                        $heightVar = '';
+                        //$heightVar = '';
                     } elseif ($chatDetailArr['Chat']['type'] == 5) {
                         $width = ($chatDetailArr['Chat']['cards'][8] != '') ? 271 : 259;
-                        $height = ($chatDetailArr['Chat']['cards'][8] != '') ? 357 : 259;
-                        $heightVar = "--crop-h $height";
+                        //$height = ($chatDetailArr['Chat']['cards'][8] != '') ? 357 : 259;
+                        //$heightVar = "--crop-h $height";
                     }
 
                     //xvfb-run --server-args="-screen 0, 1024x680x24" ./wkhtmltoimage --use-xserver --quality 83 --javascript-delay 200 http://google.com pawan.png
