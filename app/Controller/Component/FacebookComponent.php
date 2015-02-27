@@ -109,74 +109,154 @@ class FacebookComponent extends Component {
 
                 $screenshotUrl = HOST_ROOT_PATH . "pages/getscreenshot/chatid:" . $sharingDetailArr['Sharing']['chat_id'] . "/shareid:" . $sharingId;
 
-                /* if ($chatDetailArr['Chat']['clicks'] !== NULL || ($chatDetailArr['Chat']['type'] == 1 || $chatDetailArr['Chat']['type'] == 2 ||
-                  $chatDetailArr['Chat']['type'] == 3 || $chatDetailArr['Chat']['type'] == 4 || $chatDetailArr['Chat']['type'] == 6))
-                  { */
+                // generating random image name for tomporary file path.
+                $randomImageName = strtotime(date('Y-m-d H:i:s'));
+                $fileName = $randomImageName . '.png';
+                $srcImagePath = WWW_ROOT . 'images/' . $fileName;
+                $fp = fopen($srcImagePath, 'w+');
+                chmod($srcImagePath, 0777);
+                fclose($fp);
 
-                    //$params = array_merge ($params,array("picture" => $chatDetailArr['Chat']['content']));
-                    //$sharingImageUrl = $this->Image->watermarkingOnImage($chatDetailArr['Chat']['content']);
-                    // generating random image name for tomporary file path.
-                    $randomImageName = strtotime(date('Y-m-d H:i:s'));
-                    $fileName = $randomImageName . '.png';
-                    $srcImagePath = WWW_ROOT . 'images/' . $fileName;
-                    $fp = fopen($srcImagePath, 'w+');
-                    chmod($srcImagePath, 0777);
-                    fclose($fp);
-
-                    //xvfb-run --server-args="-screen 0, 1024x680x24" ./wkhtmltoimage --use-xserver --quality 83 --javascript-delay 200 http://google.com pawan.png
-                    $execOptions = "--use-xserver --load-error-handling ignore --crop-w 550 --crop-x 245 --crop-y 0 --quality 90 --javascript-delay 300";
-                    // run wkhtmltoimage for capturing screenshot from url..
-                    exec("xvfb-run --server-args=\"-screen 0, 1024x680x24\" /usr/local/bin/wkhtmltoimage $execOptions $screenshotUrl $srcImagePath");
-                    
-                    // upload file on s3 and delete from local folder..
-                    $response = $this->cakes3c->putObject($srcImagePath, $fileName, $this->cakes3c->permission('public_read_write'));
-                    //if($response['url']!='')
-                    //    unlink($srcImagePath);        
-                    $sharingImageUrl = $response['url'];
-                    
-                    if ($chatDetailArr['Chat']['type'] != 3 && $chatDetailArr['Chat']['type'] != 4) {
-                        $params = array_merge($params, array("picture" => $sharingImageUrl, "link" => $sharingImageUrl));
-                    }
+                // setting up file uploading support on facebook.
+                $this->facebook->setFileUploadSupport(TRUE);
 
                 $query_params = array('conditions' => array('_id' => new MongoId($chatDetailArr['Chat']['userId'])));
                 $userDetailArr = $this->User->find('first', $query_params);
 
-                $message = ($chatDetailArr['Chat']['message'] != '') ? $chatDetailArr['Chat']['message'] :
-                        $userDetailArr['User']['name'] . " shared a " . $chatTypeArr[$chatDetailArr['Chat']['type']] . ".";
-                $params = array_merge($params, array("message" => $message, "name" => $message)); // , "name" => $message
+                // creating album on facebook if not exist otherwise fetching album id..
+                if (count($userDetailArr) > 0 && isset($userDetailArr['User']['facebook_album_id'])) {
+                    $album_uid = $userDetailArr['User']['facebook_album_id'];
+                } else {
+                    //Create an album
+                    $album_details = array(
+                        'message' => 'Clickin',
+                        'name' => 'Clickin'
+                    );
+                    $create_album = $this->facebook->api('/me/albums', 'post', $album_details);
+                    $album_uid = $create_album['id'];
+                    $userDetailArr['User']['facebook_album_id'] = $album_uid;
+                    $this->User->save($userDetailArr);
+                }
 
-                $params = array_merge($params, array("caption" => SUPPORT_SENDER_EMAIL_NAME));
 
-                if ($chatDetailArr['Chat']['clicks'] !== NULL) {
+                if ($chatDetailArr['Chat']['type'] != 3 && $chatDetailArr['Chat']['type'] != 4) {
+                    $width = 650;
+                    if ($chatDetailArr['Chat']['type'] == 2 || $chatDetailArr['Chat']['type'] == 6) {
+                        list($width, $height) = getimagesize($chatDetailArr['Chat']['content']);
+                    } elseif ($chatDetailArr['Chat']['type'] == 5) {
+                        $width = ($chatDetailArr['Chat']['cards'][8] != '') ? 260 : 271;
+                    }
 
-                    // get relation user detail..
-                    $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
-                    $query_params = array('conditions' => array(
-                            'relationships.id' => new MongoId($chat_relation_id),
-                            'relationships.partner_id' => $chatDetailArr['Chat']['userId']
-                    ));
-                    $relUserDetailArr = $this->User->find('first', $query_params);
-                    $partner_name = $relUserDetailArr["User"]["name"];
-                    
-                    //$params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " shared " . $chatDetailArr['Chat']['clicks'] . " clicks."));
-                    $params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
-                    $params = array_merge($params, array("name" => $chatDetailArr['Chat']['message']));
-                    if ($chatDetailArr['Chat']['message'] == '')
-                        $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
+                    //xvfb-run --server-args="-screen 0, 1024x680x24" ./wkhtmltoimage --use-xserver --quality 83 --javascript-delay 200 http://google.com pawan.png
+                    $execOptions = "--use-xserver --load-error-handling ignore --crop-w $width --crop-x 0 --crop-y 0 --quality 95 --javascript-delay 300";
+                    //$execOptions = "--use-xserver --load-error-handling ignore --crop-w 550 --crop-x 245 --crop-y 0 --quality 95 --javascript-delay 300";
+                    // run wkhtmltoimage for capturing screenshot from url..
+                    exec("xvfb-run --server-args=\"-screen 0, 1024x680x24\" /usr/local/bin/wkhtmltoimage $execOptions $screenshotUrl $srcImagePath");
+
+                    // upload file on s3 and delete from local folder..
+                    //$response = $this->cakes3c->putObject($srcImagePath, $fileName, $this->cakes3c->permission('public_read_write'));
+                    //$sharingImageUrl = $response['url'];
+                    //$params = array_merge($params, array("picture" => $sharingImageUrl, "link" => $sharingImageUrl));
+
+                    $message = ($chatDetailArr['Chat']['message'] != '') ? $chatDetailArr['Chat']['message'] :
+                            $userDetailArr['User']['name'] . " shared a " . $chatTypeArr[$chatDetailArr['Chat']['type']] . ".";
+                    //$params = array_merge($params, array("message" => $message, "name" => $message)); // , "name" => $message
+                    //$params = array_merge($params, array("caption" => SUPPORT_SENDER_EMAIL_NAME));
+
+                    $params = array(
+                        'image' => "@" . $srcImagePath,
+                        'message' => $message,
+                        "name" => $message
+                    );
+
+                    if ($chatDetailArr['Chat']['clicks'] !== NULL) {
+                        // get relation user detail..
+                        $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
+                        $query_params = array('conditions' => array(
+                                'relationships.id' => new MongoId($chat_relation_id),
+                                'relationships.partner_id' => $chatDetailArr['Chat']['userId']
+                        ));
+                        $relUserDetailArr = $this->User->find('first', $query_params);
+                        $partner_name = $relUserDetailArr["User"]["name"];
+
+                        //$params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " shared " . $chatDetailArr['Chat']['clicks'] . " clicks."));
+                        $params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
+                        $params = array_merge($params, array("name" => $chatDetailArr['Chat']['message']));
+                        if ($chatDetailArr['Chat']['message'] == '')
+                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
                         //$params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with " . $chatDetailArr['Chat']['clicks'] . "."));
-                }
+                    }
 
-                // for audio posting..
-                if ($chatDetailArr['Chat']['type'] != '') {
-                    if ($chatDetailArr['Chat']['type'] == 3)
-                        $params = array_merge($params, array("picture" => $sharingImageUrl, "link" => $chatDetailArr['Chat']['content']));
-                    elseif ($chatDetailArr['Chat']['type'] == 4)
-                        $params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'picture' => $sharingImageUrl));
+                    try {
+                        //print_r($params);exit;
+                        //$postdetails = $this->facebook->api("/me/photos", "post", $params);
+                        return $postdetails = $this->facebook->api("/$album_uid/photos", "post", $params);
+                    } catch (Exception $e) {
+                        return array('exception' => $e->getMessage());
+                    }
+                } else {
+                    $message = ($chatDetailArr['Chat']['message'] != '') ? $chatDetailArr['Chat']['message'] :
+                            $userDetailArr['User']['name'] . " shared a " . $chatTypeArr[$chatDetailArr['Chat']['type']] . ".";
+                    //$params = array_merge($params, array("message" => $message, "name" => $message)); // , "name" => $message
+                    //$params = array_merge($params, array("caption" => SUPPORT_SENDER_EMAIL_NAME));
+
+                    $params = array(
+                        'image' => "@" . $srcImagePath,
+                        'message' => $message,
+                        "name" => $message
+                    );
+
+                    if ($chatDetailArr['Chat']['clicks'] !== NULL) {
+                        // get relation user detail..
+                        $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
+                        $query_params = array('conditions' => array(
+                                'relationships.id' => new MongoId($chat_relation_id),
+                                'relationships.partner_id' => $chatDetailArr['Chat']['userId']
+                        ));
+                        $relUserDetailArr = $this->User->find('first', $query_params);
+                        $partner_name = $relUserDetailArr["User"]["name"];
+
+                        //$params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " shared " . $chatDetailArr['Chat']['clicks'] . " clicks."));
+                        $params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
+                        $params = array_merge($params, array("name" => $chatDetailArr['Chat']['message']));
+                        if ($chatDetailArr['Chat']['message'] == '')
+                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
+                        //$params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with " . $chatDetailArr['Chat']['clicks'] . "."));
+                    }
+
+                    // for audio posting..
+                    if ($chatDetailArr['Chat']['type'] != '') {
+                        if ($chatDetailArr['Chat']['type'] == 3)
+                        //$params = array_merge($params, array("picture" => $sharingImageUrl, "link" => $chatDetailArr['Chat']['content']));
+                            $params = array_merge($params, array("link" => $chatDetailArr['Chat']['content']));
+                        elseif ($chatDetailArr['Chat']['type'] == 4)
+                        //$params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'picture' => $sharingImageUrl));
+                            $params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'picture' => $chatDetailArr['Chat']['video_thumb']));
                         //$params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'source' => $chatDetailArr['Chat']['video_thumb']));
-                }
+                    }
 
-                //}                
+                    /* // for new code of video uploading.
+                     * $video_details = array(   
+                      'access_token'=> 'user publish token',
+                      'message'=> 'Test video!',
+                      'source'=> '@' .realpath($videosPathOnServer)
+                      );
+                      $post_video = $facebook->api('/'.$usersFacebookID.'/videos', 'post', $video_details);
+                     */
+                    try {
+                        return $postdetails = $this->facebook->api("/me/feed", "post", $params);
+                    } catch (Exception $e) {
+                        return array('exception' => $e->getMessage());
+                    }
+                }
             }
+
+            //print_r($params);
+            /* try {
+              return $postdetails = $this->facebook->api("/me/feed", "post", $params);
+              } catch (Exception $e) {
+              return array('exception' => $e->getMessage());
+              } */
 
             // text or images...
             /* $params = array(
@@ -198,12 +278,6 @@ class FacebookComponent extends Component {
               'description'=> 'custom video description',
               'source' => 'http://i.imgur.com/lHkOsiH.png',
               ); */
-            //print_r($params);
-            try {
-                return $postdetails = $this->facebook->api("/me/feed", "post", $params);
-            } catch (Exception $e) {
-                return array('exception' => $e->getMessage());
-            }
         } else {
             return array('exception' => 'data not avaiable for share.');
         }

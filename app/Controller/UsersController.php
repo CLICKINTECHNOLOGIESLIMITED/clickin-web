@@ -537,10 +537,10 @@ class UsersController extends AppController {
                                 $userList = $this->User->findUserRelationshipsByNo($request_data->phone_no);
                                 if (count($userList) > 0)
                                     $this->User->updateRelationshipDataOfPartner($request_data, $userList);
-                                
+
                                 // add following entry of default user.
                                 $this->addFollowingUser($data[0]['User']['phone_no']);
-                                
+
                                 $success = true;
                                 $status = SUCCESS;
                                 $message = 'Email updated';
@@ -1140,7 +1140,7 @@ class UsersController extends AppController {
 
                         // add default follow user entry for this user...
                         $this->addFollowingUser($data[0]['User']['phone_no']);
-                        
+
                         $success = true;
                         $status = SUCCESS;
                         $message = 'User logged in.';
@@ -1255,7 +1255,7 @@ class UsersController extends AppController {
                 }
             }
         }
-        
+
         // if not following then add entry for follow..
         if ($following_user_count == 0 && count($followingUserPhoneNo) > 0) {
             $rel_id = new MongoId();
@@ -1964,6 +1964,39 @@ class UsersController extends AppController {
         $phone_no = '+919891594731';
         $message = Configure::read('WEBSMS_TEMPLATE') . " 00001111";
         $this->Sms->sendSms($phone_no, $message);
+        exit;
+    }
+
+    public function posttofb() {
+        // configure basic setup for fb..
+        $config = array(
+            'appId' => FACEBOOK_CLIENT_ID,
+            'secret' => FACEBOOK_CLIENT_SECRET,
+            'cookie' => true
+        );
+        $this->facebook = new Facebook($config);
+        $access_token = 'CAAFmZBOidnYkBAEWJzwmaTSryHti6cFCMWlrxtOKKEZAeF7smCOu5nAaLJeLqB2kdEOvQ1MwyVOpTxnyetMMOwWUqYlfZA1rhTwbPV4C9DHIP5ZClzrCi5cB3Q2i1JXxGt5quBrhqVqjmdFsTayyb3EIMpusfl5l3vhapCioo2IZAwZCfA76sRjjuL4PFe2QfzyD3Vq45HWlZA3nsJjyTnaIZAJBIMn1CYAZD';
+        $this->facebook->setAccessToken($access_token);
+        $this->facebook->setFileUploadSupport(TRUE);
+        $userDetail = $this->facebook->api("/me");
+        print_r($userDetail);
+
+        //Create an album
+        $album_details = array(
+            'message' => 'Clickin is a social app.',
+            'name' => 'Clickin'
+        );
+        $create_album = $this->facebook->api('/me/albums', 'post', $album_details);
+        $album_uid = $create_album['id'];
+
+        $params = array(
+            //'image' => "@" . WWW_ROOT . "images/user_pics/5371ffff252e0878607d285c/profile_pic.jpg",
+            'source' => 'https://qbprod.s3.amazonaws.com/fce755a0f6ef4e5b94afca5fbf8d93c600',
+            'message' => 'this is test post...',
+        );
+        //$postdetails = $this->facebook->api("/me/photos", "post", $params);
+        $postdetails = $this->facebook->api("/$album_uid/photos", "post", $params);
+        echo '<pre>Photo ID: ' . $postdetails['id'] . '</pre>';
         exit;
     }
 

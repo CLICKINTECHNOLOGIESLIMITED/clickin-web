@@ -82,8 +82,7 @@ class PagesController extends AppController {
     public function getscreenshot() {
         $this->layout = 'share';
         $sharingId = $this->request->named['shareid'];
-        ;
-
+        
         $paramSharing = array('conditions' => array('_id' => new MongoId($sharingId)));
         $sharingDetailArr = $this->Sharing->find('first', $paramSharing);
         //print_r($sharingDetailArr);        
