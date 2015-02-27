@@ -266,7 +266,7 @@
                 <div style="padding: 0 55px;display: block; vertical-align: middle; position: relative; top:50%; margin-top: -143px;height: 285px;">
                     <h1><?php echo trim($chatDetailArr['Chat']['clicks']) . 'C'; ?></h1>
                     <div style="margin-top: 50px;">
-                        <p><?php echo $chatDetailArr['Chat']['message']; ?></p>
+                        <p><?php echo trim($chatDetailArr['Chat']['message']); ?></p>
                     </div>
                 </div>
                 <div style="width:100%; position: absolute; bottom:20px; text-align: center; display: block;">
@@ -305,7 +305,7 @@
                     </div>
                     <div style="display:block;position:relative; bottom:0; left:0;text-align: center; background:#374667;color:#fff;margin-top: -6px;width:<?php echo $width; ?>px;">
                         <div style="text-align: left;font-size:1.3em;padding:20px 40px; text-align: left; word-break: break-all;">
-                            <?php echo $chatDetailArr['Chat']['message']; ?>
+                            <?php echo trim($chatDetailArr['Chat']['message']); ?>
                         </div>
                     </div>
                 </div>
@@ -346,7 +346,7 @@
             <span style="position: absolute;bottom:7px;color: #fff;right: 45px;font-weight: 700;font-size: 40px;"><?php echo $chatDetailArr['Chat']['cards'][4]; ?></span>
             <div class="container">
                 <div class="content-box">
-                    <?php echo $chatDetailArr['Chat']['cards'][1]; ?>
+                    <?php echo trim($chatDetailArr['Chat']['cards'][1]); ?>
                 </div>
             </div>
         </div>        
@@ -368,7 +368,7 @@
                 </div>
                 <div style="display:block;position:relative; bottom:0; left:0;text-align: center; background:#374667;color:#fff;margin-top: -6px;width:<?php echo $width; ?>px;">
                     <div style="text-align: left;font-size:1.3em;padding:20px 40px; text-align: left; word-break: break-all;">
-                        <?php echo $chatDetailArr['Chat']['message']; ?>
+                        <?php echo trim($chatDetailArr['Chat']['message']); ?>
                     </div>
                 </div>
             </div>
