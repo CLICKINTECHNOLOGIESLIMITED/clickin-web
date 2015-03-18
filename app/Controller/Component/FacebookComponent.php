@@ -138,7 +138,7 @@ class FacebookComponent extends Component {
                     $this->User->save($userDetailArr);
                 }
 
-
+                // checking chat type is audio/video if any one of them is not audio and video then go here..
                 if ($chatDetailArr['Chat']['type'] != 3 && $chatDetailArr['Chat']['type'] != 4) {
                     $width = 650;
                     $heightVar = '';
@@ -151,9 +151,7 @@ class FacebookComponent extends Component {
                         $heightVar = "--crop-h $height";
                     }
 
-                    //xvfb-run --server-args="-screen 0, 1024x680x24" ./wkhtmltoimage --use-xserver --quality 83 --javascript-delay 200 http://google.com pawan.png
                     $execOptions = "--use-xserver --load-error-handling ignore --crop-w $width $heightVar --crop-x 0 --crop-y 0 --quality 98 --javascript-delay 300";
-                    //$execOptions = "--use-xserver --load-error-handling ignore --crop-w 550 --crop-x 245 --crop-y 0 --quality 95 --javascript-delay 300";
                     // run wkhtmltoimage for capturing screenshot from url..
                     exec("xvfb-run --server-args=\"-screen 0, 1024x680x24\" /usr/local/bin/wkhtmltoimage $execOptions $screenshotUrl $srcImagePath");
 
@@ -161,11 +159,27 @@ class FacebookComponent extends Component {
                     //$response = $this->cakes3c->putObject($srcImagePath, $fileName, $this->cakes3c->permission('public_read_write'));
                     //$sharingImageUrl = $response['url'];
                     //$params = array_merge($params, array("picture" => $sharingImageUrl, "link" => $sharingImageUrl));
+                    // get relation user detail..
+                    $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
+                    $query_params = array('conditions' => array(
+                            'relationships.id' => new MongoId($chat_relation_id),
+                            'relationships.partner_id' => $chatDetailArr['Chat']['userId']
+                    ));
+                    $relUserDetailArr = $this->User->find('first', $query_params);
+                    $partner_name = $relUserDetailArr["User"]["name"];
 
-                    $message = ($chatDetailArr['Chat']['message'] != '') ? $chatDetailArr['Chat']['message'] :
-                            $userDetailArr['User']['name'] . " shared a " . $chatTypeArr[$chatDetailArr['Chat']['type']] . ".";
-                    //$params = array_merge($params, array("message" => $message, "name" => $message)); // , "name" => $message
-                    //$params = array_merge($params, array("caption" => SUPPORT_SENDER_EMAIL_NAME));
+                    if ($chatDetailArr['Chat']['type'] == 1 || $chatDetailArr['Chat']['type'] == 2) {
+                        $message = $userDetailArr['User']['name'] . " Clicked with $partner_name.";
+                    } elseif ($chatDetailArr['Chat']['type'] == 6) {
+                        $message = "I'm Here! Come Find me!";
+                    } elseif ($chatDetailArr['Chat']['type'] == 5) {
+                        // for trade card..
+                        if($chatDetailArr['Chat']['cards'][8] != '') {
+                            $message = $userDetailArr['User']['name'] . " played a Trade Card with " . $partner_name;
+                        } else {
+                            $message = $userDetailArr['User']['name'] . " played a Trade Card with " . $partner_name;
+                        }
+                    }
 
                     $params = array(
                         'image' => "@" . $srcImagePath,
@@ -174,58 +188,45 @@ class FacebookComponent extends Component {
                     );
 
                     if ($chatDetailArr['Chat']['clicks'] !== NULL) {
-                        // get relation user detail..
-                        $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
-                        $query_params = array('conditions' => array(
-                                'relationships.id' => new MongoId($chat_relation_id),
-                                'relationships.partner_id' => $chatDetailArr['Chat']['userId']
-                        ));
-                        $relUserDetailArr = $this->User->find('first', $query_params);
-                        $partner_name = $relUserDetailArr["User"]["name"];
-
-                        //$params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " shared " . $chatDetailArr['Chat']['clicks'] . " clicks."));
-                        $params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
-                        $params = array_merge($params, array("name" => $chatDetailArr['Chat']['message']));
+                        $params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
+                        $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
                         if ($chatDetailArr['Chat']['message'] == '')
-                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
-                        //$params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with " . $chatDetailArr['Chat']['clicks'] . "."));
+                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
                     }
 
                     try {
-                        //print_r($params);exit;
                         //$postdetails = $this->facebook->api("/me/photos", "post", $params);
                         return $postdetails = $this->facebook->api("/$album_uid/photos", "post", $params);
                     } catch (Exception $e) {
                         return array('exception' => $e->getMessage());
                     }
                 } else {
+
+                    // get relation user detail..
+                    $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
+                    $query_params = array('conditions' => array(
+                            'relationships.id' => new MongoId($chat_relation_id),
+                            'relationships.partner_id' => $chatDetailArr['Chat']['userId']
+                    ));
+                    $relUserDetailArr = $this->User->find('first', $query_params);
+                    $partner_name = $relUserDetailArr["User"]["name"];
+
+                    $name = $chatDetailArr['Chat']['type'] == 3 ? $userDetailArr['User']['name'] . ' just shared an audio on Clickin! Check it out!' :
+                            $userDetailArr['User']['name'] . ' just shared a video with ' . $partner_name . ' on Clickin! Check it out!';
                     $message = ($chatDetailArr['Chat']['message'] != '') ? $chatDetailArr['Chat']['message'] :
                             $userDetailArr['User']['name'] . " shared a " . $chatTypeArr[$chatDetailArr['Chat']['type']] . ".";
-                    //$params = array_merge($params, array("message" => $message, "name" => $message)); // , "name" => $message
-                    //$params = array_merge($params, array("caption" => SUPPORT_SENDER_EMAIL_NAME));
 
                     $params = array(
                         'image' => "@" . $srcImagePath,
                         'message' => $message,
-                        "name" => $message
+                        "name" => $name
                     );
 
                     if ($chatDetailArr['Chat']['clicks'] !== NULL) {
-                        // get relation user detail..
-                        $chat_relation_id = $chatDetailArr['Chat']['relationshipId'];
-                        $query_params = array('conditions' => array(
-                                'relationships.id' => new MongoId($chat_relation_id),
-                                'relationships.partner_id' => $chatDetailArr['Chat']['userId']
-                        ));
-                        $relUserDetailArr = $this->User->find('first', $query_params);
-                        $partner_name = $relUserDetailArr["User"]["name"];
-
-                        //$params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " shared " . $chatDetailArr['Chat']['clicks'] . " clicks."));
-                        $params = array_merge($params, array("message" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
-                        $params = array_merge($params, array("name" => $chatDetailArr['Chat']['message']));
+                        $params = array_merge($params, array("message" => $chatDetailArr['Chat']['message']));
+                        $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
                         if ($chatDetailArr['Chat']['message'] == '')
-                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with $partner_name."));
-                        //$params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " just Clicked with " . $chatDetailArr['Chat']['clicks'] . "."));
+                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
                     }
 
                     // for audio posting..
@@ -239,14 +240,6 @@ class FacebookComponent extends Component {
                         //$params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'source' => $chatDetailArr['Chat']['video_thumb']));
                     }
 
-                    /* // for new code of video uploading.
-                     * $video_details = array(   
-                      'access_token'=> 'user publish token',
-                      'message'=> 'Test video!',
-                      'source'=> '@' .realpath($videosPathOnServer)
-                      );
-                      $post_video = $facebook->api('/'.$usersFacebookID.'/videos', 'post', $video_details);
-                     */
                     try {
                         return $postdetails = $this->facebook->api("/me/feed", "post", $params);
                     } catch (Exception $e) {
@@ -254,34 +247,6 @@ class FacebookComponent extends Component {
                     }
                 }
             }
-
-            //print_r($params);
-            /* try {
-              return $postdetails = $this->facebook->api("/me/feed", "post", $params);
-              } catch (Exception $e) {
-              return array('exception' => $e->getMessage());
-              } */
-
-            // text or images...
-            /* $params = array(
-              "access_token" => $access_token,
-              "message" => "Here is a blog post about auto posting on Facebook using PHP facebook",
-              "link" => "http://www.pontikis.net/blog/auto_post_on_facebook_with_php",
-              "picture" => "http://i.imgur.com/lHkOsiH.png",
-              "name" => "How to Auto Post on Facebook with PHP",
-              "caption" => "www.pontikis.net",
-              "description" => "Automatically post on Facebook with PHP using Facebook PHP SDK."
-              );
-
-              // for video..
-              $params = array(
-              "access_token" => $access_token,
-              'link'=>'http://www.youtube.com/watch?v=seBpXt8_6xs',
-              'name' => 'custom video name',
-              'caption'=>'custom video caption',
-              'description'=> 'custom video description',
-              'source' => 'http://i.imgur.com/lHkOsiH.png',
-              ); */
         } else {
             return array('exception' => 'data not avaiable for share.');
         }
