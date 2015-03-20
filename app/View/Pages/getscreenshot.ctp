@@ -267,7 +267,7 @@
                 <div style="padding: 0 55px;display: block; vertical-align: middle; position: relative; top:50%; margin-top: -143px;height: 285px;">
                     <h1><?php echo trim($chatDetailArr['Chat']['clicks'])?><span><?php echo $this->Html->image('icon.png', array('width' => "115",'style'=>'margin-bottom:-5px')); ?></span></h1>
                     <div style="margin-top: 50px;">
-                        <p><?php echo trim($chatDetailArr['Chat']['message']); ?></p>
+                        <p style="font-size-adjust: inherit"><?php echo trim($chatDetailArr['Chat']['message']); ?></p>
                     </div>
                 </div>
                 <div style="width:100%; position: absolute; bottom:20px; text-align: center; display: block;">
