@@ -223,10 +223,11 @@ class FacebookComponent extends Component {
                     );
 
                     if ($chatDetailArr['Chat']['clicks'] !== NULL) {
-                        $params = array_merge($params, array("message" => $chatDetailArr['Chat']['message']));
+                        //$params = array_merge($params, array("message" => $chatDetailArr['Chat']['message']));
                         $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
-                        if ($chatDetailArr['Chat']['message'] == '')
-                            $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
+                        if ($chatDetailArr['Chat']['message'] != '')
+                           // $params = array_merge($params, array("name" => $userDetailArr['User']['name'] . " Clicked with $partner_name."));
+                            $params = array_merge($params, array("message" => $chatDetailArr['Chat']['message']));
                     }
 
                     // for audio posting..
