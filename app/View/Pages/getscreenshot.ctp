@@ -262,10 +262,10 @@
 <?php if ($chatDetailArr['Chat']['type'] == 1) { //chat ?>
 
     <?php if (trim($chatDetailArr['Chat']['message']) != '') { ?>
-        <div style="width:100%; height: 100%; max-width:650px; margin: auto;float: left;">
-            <div style="float: left; display: block; width: 100%; background:#374667; height: 600px; position: relative;">
+        <div style="width:100%; height: 100%; max-width:600px; margin: auto;float: left;">
+            <div style="float: left; display: block; width: 100%; background:#374667 url('<?php echo $this->webroot; ?>img/back.png') no-repeat 0px 0px; background-size: 100%; height: 600px; position: relative;">
                 <div style="padding: 0 55px;display: block; vertical-align: middle; position: relative; top:50%; margin-top: -143px;height: 285px;">
-                    <h1><?php echo trim($chatDetailArr['Chat']['clicks']) . 'C'; ?></h1>
+                    <h1><?php echo trim($chatDetailArr['Chat']['clicks'])?><span><?php echo $this->Html->image('icon.png', array('width' => "115",'style'=>'margin-bottom:-5px')); ?></span></h1>
                     <div style="margin-top: 50px;">
                         <p><?php echo trim($chatDetailArr['Chat']['message']); ?></p>
                     </div>
@@ -276,10 +276,10 @@
             </div>
         </div>
     <?php } else { ?>
-        <div style="width:100%; height: 100%; max-width:650px; margin: auto;float: left;">
-            <div style="float: left; display: block; width: 100%; background:#374667; height: 600px; position: relative;">
-                <div style="padding: 0 55px;display: block; vertical-align: middle; position: relative; top:50%; margin-top: -143px;height: 285px;">
-                    <h1><?php echo trim($chatDetailArr['Chat']['clicks']) . 'C'; ?></h1>
+        <div style="width:100%; height: 100%; max-width:600px; margin: auto;float: left;">
+            <div style="float: left; display: block; width: 100%; background:#374667 url('<?php echo $this->webroot; ?>img/back.png') no-repeat 0px 0px; background-size: 100%;; height: 600px; position: relative;">
+                <div style="padding: 0 55px;display: block; vertical-align: middle; position: relative; top:50%; margin-top: -75px;height: 285px;">
+                    <h1><?php echo trim($chatDetailArr['Chat']['clicks']); ?><span><?php echo $this->Html->image('icon.png', array('width' => "115",'style'=>'margin-bottom:-5px')); ?></span></h1>
                 </div>
                 <div style="width:100%; position: absolute; bottom:20px; text-align: center; display: block;">
                     <?php echo $this->Html->image('Clickin-mini-logo.png', array('width' => "80")); ?>
