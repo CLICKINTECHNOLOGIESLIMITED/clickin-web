@@ -217,9 +217,9 @@ class FacebookComponent extends Component {
                             $userDetailArr['User']['name'] . " shared a " . $chatTypeArr[$chatDetailArr['Chat']['type']] . ".";
 
                     $params = array(
-                        'image' => "@" . $srcImagePath,
-                        'message' => $message,
-                        "name" => $name
+                       'image' => "@" . $srcImagePath,
+	                    'message' => $message,
+	                      "name" => $name
                     );
 
                     if ($chatDetailArr['Chat']['clicks'] !== NULL) {
