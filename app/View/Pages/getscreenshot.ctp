@@ -297,7 +297,7 @@
                     list($width, $height) = getimagesize($chatDetailArr['Chat']['content']);
                     ?>
                     <div style="width: <?php echo $width; ?>px;">
-                        <div style="position: absolute; bottom:90px;display: block; margin-left: <?php echo ($width / 2) - 60; ?>px;">
+                        <div style="position: relative; bottom:30px;display: block; margin-left: <?php echo ($width / 2) - 60; ?>px;">
                             <div style="width:60px; height:60px; display:inline-block;background: url('<?php echo $this->webroot; ?>img/Clickin-mini-logo.png') no-repeat top center;background-size: 100%; position: absolute;bottom:0;left:0;z-index: 2;" ></div>
                             <div style="width:60px; height:60px; display:inline-block;background: url('<?php echo $this->webroot; ?>img/Clickin-point-bg.png') no-repeat top center;background-size: 100%;position: absolute;left:48px;bottom:0;z-index: 1;" >
                                 <span style="display: block;font-weight: 700;text-align: center;color:#fff;padding:21px 10px 0 8px;font-size: 13px; "><?php echo trim($chatDetailArr['Chat']['clicks']) . 'C'; ?></span>
@@ -321,7 +321,7 @@
                     list($width, $height) = getimagesize($chatDetailArr['Chat']['content']);
                     ?>
                     <div style="width: <?php echo $width; ?>px;">
-                        <div style="position: absolute; bottom:90px;display: block; margin-left: <?php echo ($width / 2) - 60; ?>px;">
+                        <div style="position: relative; bottom:30px;display: block; margin-left: <?php echo ($width / 2) - 60; ?>px;">
                             <div style="width:60px; height:60px; display:inline-block;background: url('<?php echo $this->webroot; ?>img/Clickin-mini-logo.png') no-repeat top center;background-size: 100%; position: absolute;bottom:0;left:0;z-index: 2;" ></div>
                             <div style="width:60px; height:60px; display:inline-block;background: url('<?php echo $this->webroot; ?>img/Clickin-point-bg.png') no-repeat top center;background-size: 100%;position: absolute;left:48px;bottom:0;z-index: 1;" >
                                 <span style="display: block;font-weight: 700;text-align: center;color:#fff;padding:21px 10px 0 8px;font-size: 13px; "><?php echo trim($chatDetailArr['Chat']['clicks']) . 'C'; ?></span>
