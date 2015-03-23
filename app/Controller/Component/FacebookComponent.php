@@ -111,7 +111,7 @@ class FacebookComponent extends Component {
 
                 // generating random image name for tomporary file path.
                 $randomImageName = strtotime(date('Y-m-d H:i:s'));
-                $fileName = $randomImageName . '.png';
+                $fileName = $chatTypeArr[$chatDetailArr['Chat']['type']] . '_' . $randomImageName . '.png';
                 $srcImagePath = WWW_ROOT . 'images/' . $fileName;
                 $fp = fopen($srcImagePath, 'w+');
                 chmod($srcImagePath, 0777);
