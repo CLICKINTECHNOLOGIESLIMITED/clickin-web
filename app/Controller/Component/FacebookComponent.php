@@ -237,12 +237,13 @@ class FacebookComponent extends Component {
                             $params = array_merge($params, array("link" => $chatDetailArr['Chat']['content']));
                         elseif ($chatDetailArr['Chat']['type'] == 4)
                         //$params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'picture' => $sharingImageUrl));
-                            $params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'picture' => $chatDetailArr['Chat']['video_thumb']));
+                            //$params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'picture' => $chatDetailArr['Chat']['video_thumb']));
+                            $params = array_merge($params, array("link" => $chatDetailArr['Chat']['content']));
                         //$params = array_merge($params, array("link" => $chatDetailArr['Chat']['content'], 'source' => $chatDetailArr['Chat']['video_thumb']));
                     }
 
                     try {
-                        return $postdetails = $this->facebook->api("/me/links", "post", $params);
+                        return $postdetails = $this->facebook->api("/me/feed", "post", $params);
                     } catch (Exception $e) {
                         return array('exception' => $e->getMessage());
                     }
