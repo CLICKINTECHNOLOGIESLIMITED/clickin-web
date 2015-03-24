@@ -242,7 +242,7 @@ class FacebookComponent extends Component {
                     }
 
                     try {
-                        return $postdetails = $this->facebook->api("/me/feed", "post", $params);
+                        return $postdetails = $this->facebook->api("/me/links", "post", $params);
                     } catch (Exception $e) {
                         return array('exception' => $e->getMessage());
                     }
