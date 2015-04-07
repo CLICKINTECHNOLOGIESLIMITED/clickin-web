@@ -379,4 +379,47 @@ class AdminController extends AppController {
         $this->render('/admin/users');
     }
 
+    public function downloadusers() {
+        $data = "Name,Email,Date Of Birth,City,Country,Gender,Verified,Created On,Active\n";
+        $users = $this->User->find('all', array(
+            'conditions' => array('verified' => true),
+            'order' => array('User.created' => 'desc')
+        ));
+        if (count($users) > 0) {
+            foreach ($users as $uArr) {
+
+                $dob = '';
+                if (isset($uArr['User']['dob'])) {
+                    if (is_numeric($uArr['User']['dob'])) {
+                        $year = substr($uArr['User']['dob'], -4);
+                        $dateMonthStr = substr($uArr['User']['dob'], 0, strlen($uArr['User']['dob']) - 4);
+                        if (substr($dateMonthStr, -2) > 12) {
+                            $month = '0' . substr($dateMonthStr, -1);
+                            $date = substr($dateMonthStr, 0, strlen($dateMonthStr) - 1);
+                        } else {
+                            $month = substr($dateMonthStr, -2);
+                            $date = substr($dateMonthStr, 0, strlen($dateMonthStr) - 2);
+                        }
+                        $dateStr = $year . '-' . $month . '-' . $date;
+                        $dob = strtoupper(date('d M Y', strtotime($dateStr)));
+                    } else {
+                        $dob = $uArr['User']['dob'];
+                    }
+                } else {
+                    $dob = '';
+                }
+
+                $data .= (isset($uArr['User']['name']) ? $uArr['User']['name'] : "") . "," . (isset($uArr['User']['email']) ? $uArr['User']['email'] :"") . "," . 
+                        $dob . "," . (isset($uArr['User']['city']) ? $uArr['User']['city'] : "") . "," . (isset($uArr['User']['country']) ? $uArr['User']['country'] : "") . 
+                        "," . (isset($uArr['User']['gender']) ? ($uArr['User']['gender']=="guy" ? "Male" : "Female") : "Not mentioned") . "," . 
+                        (isset($uArr['User']['verified']) ? ($uArr['User']['verified']==true ? "yes" : "no") : "no"). "," . 
+                        (date('Y-m-d h:i:s', $uArr['User']['created']->sec)). "," . (isset($uArr['User']['active']) ? $uArr['User']['active'] : "yes") ."\n";
+            }
+        }
+        header('Content-Type: application/csv');
+        header('Content-Disposition: attachement; filename="clickinuserscsv_'.date('d_m_Y_H_i_s').'.csv"');
+        echo $data;
+        exit();
+    }
+
 }
