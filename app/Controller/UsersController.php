@@ -241,11 +241,11 @@ class UsersController extends AppController {
                 // Check if record exists
                 if (count($data) != 0) {
                     // Check vcode entered is valid
-                    if ($data[0]['User']['verified'] === TRUE) {
+                    /*if ($data[0]['User']['verified'] === TRUE) {
                         $success = false;
                         $status = ERROR;
                         $message = 'User already verified';
-                    } elseif ($request_data->vcode != $data[0]['User']['vcode']) { // Vcode is not valid
+                    } else*/ if ($request_data->vcode != $data[0]['User']['vcode']) { // Vcode is not valid
                         $success = false;
                         $status = UNAUTHORISED;
                         $message = 'Verification Code is invalid';
