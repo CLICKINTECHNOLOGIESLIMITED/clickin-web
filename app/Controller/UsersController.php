@@ -88,9 +88,9 @@ class UsersController extends AppController {
                     $request_data->user_token = $this->generateUUID();                // Random string for user's uuid
                     $request_data->unread_notifications_count = 0;                    // Setting the counter at 0 when user created
                     // If Partner_no is posted then add
-                    //if(isset($request_data->partner_no) {
-                    //    $request_data->partner_no = $request_data->partner_no;        // Setting the number of partner entered
-                    //}
+                    if(isset($request_data->partner_no)) {
+                        $request_data->partner_no = $request_data->partner_no;        // Setting the number of partner entered
+                    }
                     
                     if ($this->User->save($request_data)) {
                         // Send vcode sms on production environment only
@@ -323,6 +323,7 @@ class UsersController extends AppController {
                             $message = 'User Verified';
                             $user_token = $data[0]['User']['user_token'];
                             $user_id = $data[0]['User']['_id'];
+                            $partner_no = $data[0]['User']['partner_no'];
                             //$qb_id = $user_data['QB_id'];
                         } else {
                             $success = false;
