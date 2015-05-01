@@ -161,23 +161,25 @@ class UsersController extends AppController {
                 // Return True if existing user is trying to get in 
                 // Send him the Vcode via SMS
                 else {
-                    // Send vcode sms on production environment only
-                    if (!$env || $env == 'production') {
-                        // Send VCode through SMS, after user has been created
-                        $vcodeSMS = $this->sendVcodeSMS($request_data->phone_no, $vcode);
-                    }
-
-                    // Sets the Vcode & verified status to false
+                    // Sets the Vcode & verified status to false   
+                    // Update user record and set new vcode
                     $user_data = array(
                         '_id' => $data[0]['User']['_id'],
-                        //'badge_count' => 0,
                         'verified' => false,
                         'vcode' => $vcode
-                    );   
+                    );
+
+                    if ($this->User->save($user_data)) {
+                      // Send vcode sms on production environment only
+                      if (!$env || $env == 'production') {
+                          // Send VCode through SMS, after user has been created
+                          $vcodeSMS = $this->sendVcodeSMS($request_data->phone_no, $vcode);
+                      }                    
+                    }
 
                     $success = true;
                     $status = SUCCESS;
-                    $message = 'User Found';                      
+                    $message = 'User Found';                       
                 }      
                 break;
             // Phone no. blank in request
