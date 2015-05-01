@@ -146,7 +146,7 @@ class UsersController extends AppController {
 
                         $success = true;
                         $status = SUCCESS;
-                        $message = 'User Created';
+                        $message = 'User Found. Device token updated.';
                     } else {
                         $success = false;
                         $status = ERROR;
