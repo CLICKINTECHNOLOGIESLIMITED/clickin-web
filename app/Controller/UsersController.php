@@ -151,12 +151,26 @@ class UsersController extends AppController {
                     }
                 }
                 // Return false if record already exists
+                /*
                 else {
                     $success = false;
                     $status = ERROR;
                     CakeLog::write('info', "\ncreateuser : record already exists : User phone no : " . $request_data->phone_no, array('clickin'));
                     $message = 'User with same phone no. already exists.';
-                }
+                }*/
+                // Return True if existing user is trying to get in 
+                // Send him the Vcode via SMS
+                else {
+                    // Send vcode sms on production environment only
+                    //if (!$env || $env == 'production') {
+                        // Send VCode through SMS, after user has been created
+                        $vcodeSMS = $this->sendVcodeSMS($request_data->phone_no, $vcode);
+                    //}
+
+                    $success = true;
+                    $status = SUCCESS;
+                    $message = 'User Found';                      
+                }      
                 break;
             // Phone no. blank in request
             case!empty($request_data) && empty($request_data->phone_no):
