@@ -162,10 +162,18 @@ class UsersController extends AppController {
                 // Send him the Vcode via SMS
                 else {
                     // Send vcode sms on production environment only
-                    //if (!$env || $env == 'production') {
+                    if (!$env || $env == 'production') {
                         // Send VCode through SMS, after user has been created
                         $vcodeSMS = $this->sendVcodeSMS($request_data->phone_no, $vcode);
-                    //}
+                    }
+
+                    // Sets the Vcode & verified status to false
+                    $user_data = array(
+                        '_id' => $data[0]['User']['_id'],
+                        //'badge_count' => 0,
+                        'verified' => false,
+                        'vcode' => $vcode
+                    );   
 
                     $success = true;
                     $status = SUCCESS;
