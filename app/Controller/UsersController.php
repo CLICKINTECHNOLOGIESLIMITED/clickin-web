@@ -386,6 +386,7 @@ class UsersController extends AppController {
         if ($success) {
             $out['user_token'] = $user_token;
             //$out['QB_id'] = $qb_id;
+            $out['partner_no'] = $partner_no;
             $out['user_id'] = $user_id;
         }
 
