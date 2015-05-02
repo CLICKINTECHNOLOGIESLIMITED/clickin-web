@@ -324,7 +324,7 @@ class UsersController extends AppController {
                             $user_token = $data[0]['User']['user_token'];
                             $user_id = $data[0]['User']['_id'];
                             $partner_no = $data[0]['User']['partner_no'];
-                            //$qb_id = $user_data['QB_id'];
+                            $qb_id = $user_data['QB_id'];
                         } else {
                             $success = false;
                             $status = ERROR;
@@ -385,7 +385,7 @@ class UsersController extends AppController {
 
         if ($success) {
             $out['user_token'] = $user_token;
-            //$out['QB_id'] = $qb_id;
+            $out['QB_id'] = $qb_id;
             $out['partner_no'] = $partner_no;
             $out['user_id'] = $user_id;
         }
