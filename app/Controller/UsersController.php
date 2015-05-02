@@ -287,7 +287,7 @@ class UsersController extends AppController {
                         $user_data = array(
                             '_id' => $data[0]['User']['_id'],
                             'badge_count' => 0,
-                                //'verified' => true,
+                            'verified' => true
                                 //'vcode' => ''
                         );
 
