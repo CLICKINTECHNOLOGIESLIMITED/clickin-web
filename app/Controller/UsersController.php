@@ -2030,4 +2030,19 @@ class UsersController extends AppController {
         echo '<pre>Photo ID: ' . $postdetails['id'] . '</pre>';
         exit;
     }
+    
+    public function getpartnerstatus() {
+        
+        $success = false;
+        $status = UNAUTHORISED;
+        $message = 'User not verified';
+        
+        $out = array(
+            "success" => $success,
+            "message" => $message
+        );
+        
+        return new CakeResponse(array('body' => json_encode($out), 'type' => 'json'));
+    }
+    
 }
