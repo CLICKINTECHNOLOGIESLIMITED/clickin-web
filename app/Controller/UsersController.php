@@ -46,7 +46,7 @@ class UsersController extends AppController {
     public function createuser() {
         // Fetch the request data in JSON format and convert it into object
         $request_data = $this->request->input('json_decode');
-        print_r($request_data);
+        
         switch (true) {
             // When request is not made using POST method
             case!$this->request->isPost() :
