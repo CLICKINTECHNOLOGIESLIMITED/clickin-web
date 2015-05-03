@@ -2030,5 +2030,57 @@ class UsersController extends AppController {
         echo '<pre>Photo ID: ' . $postdetails['id'] . '</pre>';
         exit;
     }
+    
+    
+    /*
+        getpartnerstatus
+    */
+    public function getpartnerstatus(){
+        // Fetch the request data in JSON format and convert it into object
+        $request_data = $this->request->input('json_decode');
+        switch (true) {
+            // When request is not made using POST method
+            case!$this->request->isPost() :
+                $success = false;
+                $status = BAD_REQUEST;
+                CakeLog::write('info', "\nbad request : phone no : " . $request_data->phone_no, array('clickin'));
+                $message = 'Wrong request method.';
+                break;
+            // Request is valid and phone no is present
+            case!empty($request_data) && !empty($request_data->phone_no): 
+                // Check if record with same phone no exists
+                $user     = $this->User->findUser($request_data->phone_no);
+                $partner  = $this->User->findUser($request_data->partnerNo);
+
+                // Checking environment variable, to determine application environment
+                $env = getenv('CAKE_ENV');
+
+                // 
+                if (!$env || $env == 'production') {
+
+                } else {
+
+                }
+
+                // If user does not exist 
+                if (count($user) == 0) {
+                    $success = false;
+                    $status = UNAUTHORISED;
+                    $message = 'User not registered';
+                // If partner does not exist
+                } elseif (count($partner) == 0) {
+                    $success = false;
+                    $status = UNAUTHORISED;
+                    $message = 'Partner does not exist';
+                // If partner exists
+                } else {
+                    $success = true;
+                    $status = SUCCESS;
+                    $message = 'Partner found';
+                }
+                break; 
+        }
+    
+    }
 
 }
