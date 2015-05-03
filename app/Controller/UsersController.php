@@ -2062,7 +2062,7 @@ class UsersController extends AppController {
             "message" => $message
         );
         
-        return new CakeResponse(array('body' => json_encode($request_data), 'type' => 'json'));
+        return new CakeResponse(array('body' => json_encode($out), 'type' => 'json'));
     }
     
 }
