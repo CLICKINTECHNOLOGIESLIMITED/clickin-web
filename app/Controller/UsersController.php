@@ -2071,5 +2071,5 @@ class UsersController extends AppController {
         }
 
         return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
-
+    }
 }
