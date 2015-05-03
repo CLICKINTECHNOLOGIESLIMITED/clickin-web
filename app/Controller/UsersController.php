@@ -2030,46 +2030,4 @@ class UsersController extends AppController {
         echo '<pre>Photo ID: ' . $postdetails['id'] . '</pre>';
         exit;
     }
-    
-    
-    /*
-        getpartnerstatus
-    */
-    public function getpartnerstatus(){
-        // Fetch the request data in JSON format and convert it into object
-        $request_data = $this->request->input('json_decode');
-        
-        $user     = $this->User->findUser($request_data->phone_no);
-        $partner  = $this->User->findUser($request_data->partnerNo);
-        
-    
-            // If user does not exist 
-            if (count($user) == 0) {
-                $success = false;
-                $status = UNAUTHORISED;
-                $message = 'User not registered';
-            // If partner does not exist
-            } elseif (count($partner) == 0) {
-                $success = false;
-                $status = UNAUTHORISED;
-                $message = 'Partner does not exist';
-            // If partner exists
-            } else {
-                $success = true;
-                $status = SUCCESS;
-                $message = 'Partner found';
-            }
-        }
-        
-         $out = array(
-            "success" => $success,
-            "message" => $message
-        );
-
-        if ($success) {
-
-        }
-
-        return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
-    }
 }
