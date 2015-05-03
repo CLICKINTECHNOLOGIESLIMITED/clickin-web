@@ -2038,6 +2038,10 @@ class UsersController extends AppController {
     public function getpartnerstatus(){
         // Fetch the request data in JSON format and convert it into object
         $request_data = $this->request->input('json_decode');
+        
+        $user     = $this->User->findUser($request_data->phone_no);
+        $partner  = $this->User->findUser($request_data->partnerNo);
+        
     
             // If user does not exist 
             if (count($user) == 0) {
