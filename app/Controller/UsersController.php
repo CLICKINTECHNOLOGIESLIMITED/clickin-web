@@ -2040,10 +2040,22 @@ class UsersController extends AppController {
         $user     = $this->User->findUser($request_data->phone_no);
         $partner  = $this->User->findUser($request_data->partnerNo);
         
-        
-        $success = false;
-        $status = UNAUTHORISED;
-        $message = 'User not verified';
+        // If user does not exist 
+        if (count($user) == 0) {
+            $success = false;
+            $status = UNAUTHORISED;
+            $message = 'User not registered';
+        // If partner does not exist
+        } elseif (count($partner) == 0) {
+            $success = false;
+            $status = UNAUTHORISED;
+            $message = 'Partner does not exist';
+        // If partner exists
+        } else {
+            $success = true;
+            $status = SUCCESS;
+            $message = 'Partner found';
+        }
         
         $out = array(
             "success" => $success,
