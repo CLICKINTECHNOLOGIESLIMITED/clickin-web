@@ -2033,6 +2033,15 @@ class UsersController extends AppController {
     
     public function getpartnerstatus() {
         
+        // Fetch the request data in JSON format and convert it into object
+        $request_data = $this->request->input('json_decode');
+        
+        print_r($request_data);
+        
+        echo $user     = $this->User->findUser($request_data->phone_no);
+        echo $partner  = $this->User->findUser($request_data->partnerNo);
+        
+        
         $success = false;
         $status = UNAUTHORISED;
         $message = 'User not verified';
