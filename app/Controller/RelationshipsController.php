@@ -234,7 +234,7 @@ class RelationshipsController extends AppController {
                             'partner_pic' => isset($data[0]['User']['user_pic']) ? $data[0]['User']['user_pic'] : "",
                             'partner_QB_id' => isset($data[0]['User']['QB_id']) ? $data[0]['User']['QB_id'] : "",
                             'clicks' => '0',
-                            'accepted' => NULL, // false // TODO :: By default invite accepted for demo purpose
+                            'accepted' => true, // false // TODO :: By default invite accepted for demo purpose
                             'public' => true, // false //  TODO ::Make the relationship public by default
                             'deleted' => 'no',
                             'last_chat_id' => '',
@@ -258,7 +258,7 @@ class RelationshipsController extends AppController {
                             'partner_QB_id' => isset($new_partner[0]['User']['QB_id']) ? $new_partner[0]['User']['QB_id'] : '',
                             'clicks' => '0',
                             'request_initiator' => true, // Checking if user initiated the request
-                            'accepted' => NULL, // false // TODO :: By default invite accepted for demo purpose
+                            'accepted' => true, // false // TODO :: By default invite accepted for demo purpose
                             'public' => true, // false //  TODO ::Make the relationship public by default
                             'deleted' => 'no',
                             'last_chat_id' => '',
