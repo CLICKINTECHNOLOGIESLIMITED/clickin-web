@@ -1094,7 +1094,7 @@ class UsersController extends AppController {
                 $message = 'Request cannot be empty.';
                 break;
             // Request is valid and phone no / email, password and device token are present
-            case!empty($request_data) && (!empty($request_data->phone_no) || !empty($request_data->email)) && !empty($request_data->password) && !empty($request_data->device_type): // && !empty($request_data->device_token) 
+            case!empty($request_data) && (!empty($request_data->phone_no) || !empty($request_data->email)) && !empty($request_data->device_type): // && !empty($request_data->password): && !empty($request_data->device_token) 
 
                 if (!empty($request_data->phone_no)) {
                     // Check if phone no exists
