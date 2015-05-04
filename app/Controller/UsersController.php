@@ -1120,11 +1120,12 @@ class UsersController extends AppController {
                         $success = false;
                         $status = UNAUTHORISED;
                         $message = 'User not verified';
-                    } elseif (md5($request_data->password) != $data[0]['User']['password']) { // Wrong password
+                    } /* elseif (md5($request_data->password) != $data[0]['User']['password']) { // Wrong password
                         $success = false;
                         $status = UNAUTHORISED;
                         $message = 'Wrong password';
-                    } else { // Credentials are valid
+                    } */ else { 
+                        // Credentials are valid
                         // update detail in users collection..
                         $params = array(
                             'fields' => array('_id', 'device_token', 'device_type'),
@@ -1192,11 +1193,13 @@ class UsersController extends AppController {
                 $message = 'Phone no. / Email cannot be blank.';
                 break;
             // Password blank in request
+            /*
             case!empty($request_data) && empty($request_data->password):
                 $success = false;
                 $status = BAD_REQUEST;
                 $message = 'Password cannot be blank.';
                 break;
+            */
             /* / Device Token blank in request
               case!empty($request_data) && empty($request_data->device_token):
               $success = false;
