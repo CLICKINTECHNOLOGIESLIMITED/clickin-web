@@ -480,10 +480,11 @@ class User extends AppModel {
             foreach ($results["User"]["relationships"] as $urKey => $urVal) {
                 if ($request_data->relationship_id == (string) $results["User"]["relationships"][$urKey]['id']) {
                     if (isset($request_data->accepted)) {
-                        $results["User"]["relationships"][$urKey]["accepted"] = ($request_data->accepted == 'true') ? true : false;
+                        //$results["User"]["relationships"][$urKey]["accepted"] = ($request_data->accepted == 'true') ? true : false;
+                        $results["User"]["relationships"][$urKey]["accepted"] = ($request_data->accepted == 'true') ? true : true;
 
                         // add 25 clicks in both user's relationships subcollection..
-                        if ($request_data->accepted == 'true') {
+                        //if ($request_data->accepted == 'true') {
                             // Check if the user does not have clicks
                             if (empty($results["User"]["relationships"][$urKey]['user_clicks'])) {
                                 $results["User"]["relationships"][$urKey]['user_clicks'] = 25;
@@ -492,7 +493,7 @@ class User extends AppModel {
                             if (empty($results["User"]["relationships"][$urKey]['clicks'])) {
                                 $results["User"]["relationships"][$urKey]['clicks'] = 25;
                             }
-                        }
+                        //}
                     }
                     if ($is_new_request == 1) {
                         $results["User"]["relationships"][$urKey]["request_initiator"] = true;
@@ -502,8 +503,8 @@ class User extends AppModel {
                         $results["User"]["relationships"][$urKey]["public"] = ($request_data->public == 'true') ? true : false;
                     if (isset($request_data->deleted)) {
                         $results["User"]["relationships"][$urKey]["deleted"] = $request_data->deleted;
-                        $results["User"]["relationships"][$urKey]["accepted"] = null;
-                        $results["User"]["relationships"][$urKey]["public"] = null;
+                        $results["User"]["relationships"][$urKey]["accepted"] = true;
+                        $results["User"]["relationships"][$urKey]["public"] = true;
                         $results["User"]["relationships"][$urKey]["is_new_partner"] = 'no';
                     }
                 }
