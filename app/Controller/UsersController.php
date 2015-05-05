@@ -823,36 +823,8 @@ class UsersController extends AppController {
                                 $user_data['fb_signed_up'] = 1;
                             }
                         }
-                        
-                        // When QB_id is present then do nothing 
-                        if($data['QB_id'] !== NULL){
-                            
-                        
-                        // When QB_id is not present then make a request     
-                        } else {
-                            // Making a QB user 
-                            $QB_details = $this->Quickblox->createQBUser($data[0]['User']['_id'], $data[0]['User']['user_token'], $data[0]['User']['phone_no']);
-    
-                            // Check if QuickBlox ID was returned
-                            if ($QB_details->user->id !== NULL) {
-                                // Add the QuickBlox id into the User details array
-                                $user_data['QB_id'] = $QB_details->user->id;
-                                CakeLog::write('info', "\nUser qb id : " . $user_data['QB_id'], array('clickin'));
-                            }
-                        }
 
                         if ($this->User->save($user_data)) {
-                            
-                            if($QB_details->user->id !== NULL) {
-                                // set qb id in relationship data of this user..
-                                $request_data->partner_QB_id = $user_data['QB_id'];
-                                // save user's other details in other user's relationships..
-                                $userList = $this->User->findUserRelationshipsByNo($request_data->phone_no);
-                                if (count($userList) > 0)
-                                    $this->User->updateRelationshipDataOfPartner($request_data, $userList);
-                                // add following entry of default user.
-                                $this->addFollowingUser($data[0]['User']['phone_no']);                                
-                            }
 
                             $request_data->name = $request_data->first_name . ' ' . $request_data->last_name;
                             // save user's other details in other user's relationships..
@@ -880,15 +852,6 @@ class UsersController extends AppController {
                                     $this->sendPNOnProfilePicUpdate($request_data, $data, $user_data_pending);
                                 }
                             }
-                            
-                            // Setting values for output to the app
-                            $user_token             =  $data[0]['User']['user_token'];
-                            $device_registered      =  $data[0]['User']['device_registered'];
-                            $phone_no               =  $data[0]['User']['phone_no']
-                            $user_id                =  $data[0]['User']['_id'];
-                            $qb_id                  =  $data[0]['User']['QB_id'];
-                            $user_name              =  $data[0]['User']['user_name'];
-                            $user_pic               =  $data[0]['User']['user_pic'];
 
                             $success = true;
                             $status = SUCCESS;
@@ -979,16 +942,6 @@ class UsersController extends AppController {
             "success" => $success,
             "message" => $message
         );
-        
-        if ($success) {
-            $out['user_token']          = $user_token;
-            $out['device_registered']   = $device_registered;
-            $out['phone_no']            = $phone_no;
-            $out['user_id']             = $user_id;
-            $out['QB_id']               = $qb_id;
-            $out['user_name']           = $user_name;
-            $out['user_pic']            = $user_pic;
-        }        
 
         return new CakeResponse(array('status' => $status, 'body' => json_encode($out), 'type' => 'json'));
     }
