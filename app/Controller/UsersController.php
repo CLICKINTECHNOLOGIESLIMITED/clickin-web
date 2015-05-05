@@ -301,14 +301,17 @@ class UsersController extends AppController {
                         }
 
                         $this->User->clear();
-                        // Create user on QuickBlox and fetch the details
-                        /* $QB_details = $this->Quickblox->createQBUser($data[0]['User']['_id'], $data[0]['User']['user_token'], $data[0]['User']['phone_no']);
-
-                          // Check if QuickBlox ID was returned
-                          if ($QB_details->user->id !== NULL) {
-                          // Add the QuickBlox id into the User details array
-                          $user_data['QB_id'] = $QB_details->user->id;
-                         */
+                        
+                        //Check if QB_id is present 
+                        if($data[0]['User']['QB_id'] == NULL){
+                            // Create user on QuickBlox and fetch the details
+                            $QB_details = $this->Quickblox->createQBUser($data[0]['User']['_id'], $data[0]['User']['user_token'], $data[0]['User']['phone_no']);
+                        }                        
+                        // Check if QuickBlox ID was returned
+                        if ($QB_details->user->id !== NULL) {
+                            // Add the QuickBlox id into the User details array
+                            $user_data['QB_id'] = $QB_details->user->id;
+                        }
                         // Update only verified and vcode column in table / collection
                         if ($this->User->save($user_data)) {
 
