@@ -502,8 +502,13 @@ class User extends AppModel {
                         $results["User"]["relationships"][$urKey]["public"] = ($request_data->public == 'true') ? true : false;
                     if (isset($request_data->deleted)) {
                         $results["User"]["relationships"][$urKey]["deleted"] = $request_data->deleted;
-                        $results["User"]["relationships"][$urKey]["accepted"] = null;
-                        $results["User"]["relationships"][$urKey]["public"] = null;
+                        
+                        //$results["User"]["relationships"][$urKey]["accepted"] = null;
+                        //$results["User"]["relationships"][$urKey]["public"] = null;
+			// Set True to accept request by default
+                        $results["User"]["relationships"][$urKey]["accepted"] = true;
+                        $results["User"]["relationships"][$urKey]["public"] = true;
+
                         $results["User"]["relationships"][$urKey]["is_new_partner"] = 'no';
                     }
                 }
