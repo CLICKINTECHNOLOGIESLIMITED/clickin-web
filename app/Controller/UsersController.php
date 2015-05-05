@@ -303,7 +303,7 @@ class UsersController extends AppController {
                         $this->User->clear();
                         
                         //Check if QB_id is present 
-                        if($data[0]['User']['QB_id'] == NULL){
+                        if($data[0]['User']['QB_id'] == NULL || $data[0]['User']['QB_id'] == ""){
                             // Create user on QuickBlox and fetch the details
                             $QB_details = $this->Quickblox->createQBUser($data[0]['User']['_id'], $data[0]['User']['user_token'], $data[0]['User']['phone_no']);
                         }                        
@@ -328,7 +328,7 @@ class UsersController extends AppController {
                             $user_token = $data[0]['User']['user_token'];
                             $user_id = $data[0]['User']['_id'];
                             $partner_no = $data[0]['User']['partner_no'];
-                            $qb_id = $user_data['QB_id'];
+                            $qb_id = $data[0]['User']['QB_id'];
                         } else {
                             $success = false;
                             $status = ERROR;
