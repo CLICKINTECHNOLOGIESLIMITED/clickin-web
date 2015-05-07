@@ -10,6 +10,14 @@ class QuickbloxComponent extends Component {
      * @access public
      */
     public $HttpSocket;
+    
+    public $Qbid = '5';
+    public $Qbkey = '6QQJq2FSKKzHK2-';
+    public $Qbsecret = 'k9cTQAeFWrkEAWv';
+    //public $Qbemail = 'F89rjvZhcaj9dU7';
+    //public $Qbpass = 'F89rjvZhcaj9dU7';
+    
+    
 
     /**
      * fetchQBToken method
@@ -29,15 +37,15 @@ class QuickbloxComponent extends Component {
 
         // Fetching the QuickBlox credentials for the request
         $QB_host = Configure::read('QB.host');
-        $QB_app_id = Configure::read('QB.app_id');
-        $QB_auth_key = Configure::read('QB.auth_key');
-        $QB_auth_secret = Configure::read('QB.auth_secret');
+        $QB_app_id = $Qbid;
+        $QB_auth_key = $Qbkey;
+        $QB_auth_secret = $Qbsecret;
 
         $response = array(
             'host' => Configure::read('QB.host'),
-            'app_id' => Configure::read('QB.app_id'),
-            'auth_key' => Configure::read('QB.auth_key'),
-            'auth_secret' => Configure::read('QB.auth_secret')
+            'app_id' => $Qbid,
+            'auth_key' => $Qbkey,
+            'auth_secret' => $Qbsecret
         );
 
         $time = time();
