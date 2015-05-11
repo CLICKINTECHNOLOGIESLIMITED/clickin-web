@@ -125,7 +125,8 @@ class UsersController extends AppController {
 
                     //$data[0]['User']['name'] = $request_data->name;
                     $data[0]['User']['vcode'] = $vcode;
-                    $data[0]['User']['user_token'] = $this->generateUUID(); // Random string for user's uuid
+                    // Removing this as we don't need to genrate token on signin
+                    //$data[0]['User']['user_token'] = $this->generateUUID(); // Random string for user's uuid
 
                     $this->User->clear();
                     if ($this->User->save($data[0]['User'])) {
