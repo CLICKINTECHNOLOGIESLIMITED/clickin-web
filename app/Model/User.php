@@ -494,6 +494,14 @@ class User extends AppModel {
                             }
                         }
                     }
+                    
+	            // Check if the user does not have partner Qb id clicks
+	            if (empty($results["User"]["relationships"][$urKey]['partner_QB_id'])) {
+	            	//search partner with the partner phone number
+	            	$partner = $this->findUser($results["User"]["relationships"][$urKey]['phone_no']);
+	                $results["User"]["relationships"][$urKey]['partner_QB_id'] = $partner[0]['User']['QB_id'];
+	            }                    
+
                     if ($is_new_request == 1) {
                         $results["User"]["relationships"][$urKey]["request_initiator"] = true;
                         $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
@@ -538,6 +546,12 @@ class User extends AppModel {
                                 }
                             }
                         }
+	            	// Check if the user does not have partner Qb id clicks
+	            	if (empty($results["User"]["relationships"][$urKey]['partner_QB_id'])) {
+	            	    //search partner with the partner phone number
+	            	    $partner = $this->findUser($results["User"]["relationships"][$urKey]['phone_no']);
+	                    $results["User"]["relationships"][$urKey]['partner_QB_id'] = $partner[0]['User']['QB_id'];
+	            	}                          
                         if ($is_new_request == 1) {
                             unset($results["User"]["relationships"][$urKey]["request_initiator"]);
                             $results["User"]["relationships"][$urKey]["is_new_partner"] = 'yes';
