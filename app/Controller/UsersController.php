@@ -128,6 +128,11 @@ class UsersController extends AppController {
                     // Removing this as we don't need to genrate token on signin
                     //$data[0]['User']['user_token'] = $this->generateUUID(); // Random string for user's uuid
 
+                    // Update user_token if it is not set or is blank
+                    if (!isset($data[0]['User']['user_token']) && $data[0]['User']['user_token'] == '') {
+                        $data[0]['User']['user_token'] = $this->generateUUID(); // Random string for user's uuid
+                    }                    
+
                     $this->User->clear();
                     if ($this->User->save($data[0]['User'])) {
                         // Send vcode sms on production environment only
