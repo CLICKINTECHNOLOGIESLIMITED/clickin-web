@@ -172,12 +172,19 @@ class UsersController extends AppController {
                 // Return True if existing user is trying to get in 
                 // Send him the Vcode via SMS
                 else {
+                    
+                    // Update user_token if it is not set or is blank
+                    if (!isset($data[0]['User']['user_token']) && $data[0]['User']['user_token'] == '') {
+                        $data[0]['User']['user_token'] = $this->generateUUID(); // Random string for user's uuid
+                    }                      
+                    
                     // Sets the Vcode & verified status to false   
                     // Update user record and set new vcode
                     $user_data = array(
                         '_id' => $data[0]['User']['_id'],
                         'verified' => false,
-                        'vcode' => $vcode
+                        'vcode' => $vcode,
+                        'user_token' => $data[0]['User']['user_token']
                     );
 
                     if ($this->User->save($user_data)) {
