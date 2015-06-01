@@ -194,7 +194,6 @@ class RelationshipsController extends AppController {
                             //$new_partner_data['User']['verified'] = false;
                             // Creating a new record for Partner's data in Users collection
                             //$this->User->save($new_partner_data);
-                            */
                             // Set the flag to send SMS to the partner
                             //$sendInviteSMS = 1;
                         } else {
