@@ -221,11 +221,11 @@ class User extends AppModel {
                     
                     // Check if the user does not have clicks
                     if (empty($results[0]['User']['relationships'][$key]['user_clicks'])) {
-                        $results[0]['User']['relationships'][$key]['user_clicks'] = 25;
+                        $results[0]['User']['relationships'][$key]['user_clicks'] = 100;
                     }
                     // Check if the user does not have partner's clicks
                     if (empty($results[0]['User']['relationships'][$key]['clicks'])) {
-                        $results[0]['User']['relationships'][$key]['clicks'] = 25;
+                        $results[0]['User']['relationships'][$key]['clicks'] = 100;
                     }
                 }
                 else
@@ -486,11 +486,11 @@ class User extends AppModel {
                         if ($request_data->accepted == 'true') {
                             // Check if the user does not have clicks
                             if (empty($results["User"]["relationships"][$urKey]['user_clicks'])) {
-                                $results["User"]["relationships"][$urKey]['user_clicks'] = 25;
+                                $results["User"]["relationships"][$urKey]['user_clicks'] = 100;
                             }
                             // Check if the user does not have partner's clicks
                             if (empty($results["User"]["relationships"][$urKey]['clicks'])) {
-                                $results["User"]["relationships"][$urKey]['clicks'] = 25;
+                                $results["User"]["relationships"][$urKey]['clicks'] = 100;
                             }
                         }
                     }
@@ -538,11 +538,11 @@ class User extends AppModel {
                             if ($request_data->accepted == 'true') {
                                 // Check if the user does not have clicks
                                 if (empty($results["User"]["relationships"][$urKey]['user_clicks'])) {
-                                    $results["User"]["relationships"][$urKey]['user_clicks'] = 25;
+                                    $results["User"]["relationships"][$urKey]['user_clicks'] = 100;
                                 }
                                 // Check if the user does not have partner's clicks
                                 if (empty($results["User"]["relationships"][$urKey]['clicks'])) {
-                                    $results["User"]["relationships"][$urKey]['clicks'] = 25;
+                                    $results["User"]["relationships"][$urKey]['clicks'] = 100;
                                 }
                             }
                         }
