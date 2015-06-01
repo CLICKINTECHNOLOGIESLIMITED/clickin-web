@@ -185,15 +185,16 @@ class RelationshipsController extends AppController {
 
                         // Partner with the provided phone no. does not exist in DB
                         if (count($partner_data) == 0) {
+                            
                             // Create a new entry for partner with empty device token and name in Users collection
-                            $new_partner_data = $this->User->create();
-                            $new_partner_data['User']['phone_no'] = $request_data->partner_phone_no;
+                            //$new_partner_data = $this->User->create();
+                            //$new_partner_data['User']['phone_no'] = $request_data->partner_phone_no;
                             // Setting unread notifications count as 1, since this will be the first notification to the user after creation
-                            $new_partner_data['User']['unread_notifications_count'] = 1;
-                            $new_partner_data['User']['verified'] = false;
+                            //$new_partner_data['User']['unread_notifications_count'] = 1;
+                            //$new_partner_data['User']['verified'] = false;
                             // Creating a new record for Partner's data in Users collection
-                            $this->User->save($new_partner_data);
-
+                            //$this->User->save($new_partner_data);
+                            */
                             // Set the flag to send SMS to the partner
                             //$sendInviteSMS = 1;
                         } else {
