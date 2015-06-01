@@ -1116,8 +1116,8 @@ class RelationshipsController extends AppController {
                                         "Oops! Sorry - " . trim($data[0]['User']['name']) . " has rejected your request"
                             );
                             // getting clicks and user_clicks..
-                            $clicks = 100;
-                            $user_clicks = 100;
+                            $clicks = 0;
+                            $user_clicks = 0;
                             $data = $this->User->findUser($request_data->phone_no);
                             if (count($data[0]["User"]["relationships"]) > 0) {
                                 foreach ($data[0]["User"]["relationships"] as $urKey => $urVal) {
